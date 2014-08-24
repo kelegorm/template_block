@@ -71,7 +71,6 @@ for (var i = {{MIN}}; i < {{MAX}}; i++) {
 **Output:**
 
 ```dart
-Observatory listening on http://127.0.0.1:52387
 part of my_lib;
 
 class MyClass {
