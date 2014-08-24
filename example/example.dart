@@ -1,11 +1,3 @@
-template_block
-=====
-
-The 'template block' is a template engine for the code generators with a very simple syntax.
-
-Version: 0.1.0
-
-```dart
 import "package:template_block/template_block.dart";
 
 void main() {
@@ -66,26 +58,3 @@ final String _templateStatement =
     '''
 for (var i = {{MIN}}; i < {{MAX}}; i++) {
 }''';
-
-```
-**Output:**
-
-```dart
-Observatory listening on http://127.0.0.1:52387
-part of my_lib;
-
-class MyClass {
-  void baz() {
-  }
-  
-  int foo(int start, int end) {
-    baz();
-    for (var i = 0; i < 128; i++) {
-    }
-    for (var i = 512; i < 1024; i++) {
-    }
-  }
-  
-}
-
-```
