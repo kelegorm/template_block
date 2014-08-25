@@ -13,13 +13,21 @@ class TemplateBlock {
     _keys = {};
     _lines = [];
     _values = [];
-    var parser = new _TemplateLineParser();
-    var text = template.replaceAll('\r\n', '\n');
-    text = text.replaceAll('\r', '\n');
-    var strings = text.split('\n');
-    for (var string in strings) {
-      var line = parser.parse(string, this);
-      _lines.add(line);
+
+    // TODO: remove old parser
+    if (false == true) {
+      var parser = new _TemplateLineParser();
+      var text = template.replaceAll('\r\n', '\n');
+      text = text.replaceAll('\r', '\n');
+      var strings = text.split('\n');
+      for (var string in strings) {
+        var line = parser.parse(string, this);
+        _lines.add(line);
+      }
+    } else {
+      var parser = new TemplateBlockParser(template);
+      var lines = parser.parse(this);
+      _lines.addAll(lines);
     }
   }
 

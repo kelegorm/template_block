@@ -1,5 +1,7 @@
 name: template_block
-version: 0.1.0
+version: 0.1.1
 author: Andrew Mezoni <andrew.mezoni@gmail.com>
 description: The 'template block' is a template engine for the code generators with a very simple syntax.
 homepage: https://github.com/mezoni/template_block
+dependencies:
+  strings: any

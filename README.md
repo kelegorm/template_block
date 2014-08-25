@@ -88,3 +88,39 @@ class MyClass {
 }
 
 ```
+
+**Grammar**
+
+```
+template <- ((lastLine / multiLine / singleLine / emptyLine) (NEW_LINE !EOF)?)* EOF
+
+lastLine <- NEW_LINE &EOF
+
+multiLine <- multiLinePrefix* multiLineKey multiLineSuffix*
+
+multiLinePrefix <- !multiLineKey !NEW_LINE .
+
+multiLineKey <- "{{#" IDENT "}}"
+
+multiLineSuffix <- !NEW_LINE .
+
+singleLine <- singleLineParts
+
+singleLineParts <- (singleLineKey / singleLinePart)+
+
+singleLineKey <- "{{" IDENT "}}"
+
+singleLinePart <- !singleLineKey !NEW_LINE .
+
+emptyLine <- &NEW_LINE
+
+EOF <- !.
+
+IDENT <- IDENT_START IDENT_CONT*
+
+IDENT_START <- [A-Za-z]
+
+IDENT_CONT <- [0-z]
+
+NEW_LINE <- "\n" / "\r\n" / "\r"
+```
