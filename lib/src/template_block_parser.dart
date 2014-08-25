@@ -4,9 +4,11 @@
 part of template_block;
 class TemplateBlockParser {
   static const int EOF = -1;
-  static final List<bool> _lookahead = _unmap([0x7fffffff, 0x7fffffff, 0x7fffffff, 0x7fffc0ff, 0x1ff]);
+  static final List<bool> _lookahead = _unmap([0x7ffe03ff, 0x7ffd0fff, 0x1fff]);
   // 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
   static final List<bool> _mapping0 = _unmap([0x3ffffff, 0x7fffffe]);
+  // '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+  static final List<bool> _mapping1 = _unmap([0x7ffe03ff, 0x7ffc0fff, 0x1fff]);
   bool success;
   List _cache;
   int _cachePos;
@@ -361,7 +363,7 @@ class TemplateBlockParser {
   }
   dynamic parse_template() {
     // NONTERMINAL
-    // template <- ((lastLine / multiLine / singleLine / emptyLine) (NEW_LINE !EOF)?)* EOF ;
+    // template <- ((lastLine / multiLine / singleLine / emptyLine) (NEW_LINE !EOF)?)* EOF
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -475,7 +477,7 @@ class TemplateBlockParser {
   }
   dynamic parse_lastLine() {
     // TERMINAL
-    // lastLine <- NEW_LINE &EOF ;
+    // lastLine <- NEW_LINE &EOF
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -517,7 +519,7 @@ class TemplateBlockParser {
   }
   dynamic parse_multiLine() {
     // TERMINAL
-    // multiLine <- multiLinePrefix* multiLineKey multiLineSuffix* ;
+    // multiLine <- multiLinePrefix* multiLineKey multiLineSuffix*
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -581,7 +583,7 @@ class TemplateBlockParser {
   }
   dynamic parse_multiLinePrefix() {
     // TERMINAL
-    // multiLinePrefix <- !multiLineKey !NEW_LINE . ;
+    // multiLinePrefix <- !multiLineKey !NEW_LINE .
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -641,7 +643,7 @@ class TemplateBlockParser {
   }
   dynamic parse_multiLineKey() {
     // TERMINAL
-    // multiLineKey <- "{{#" IDENT "}}" ;
+    // multiLineKey <- "{{#" IDENT "}}"
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -679,7 +681,7 @@ class TemplateBlockParser {
   }
   dynamic parse_multiLineSuffix() {
     // TERMINAL
-    // multiLineSuffix <- !NEW_LINE . ;
+    // multiLineSuffix <- !NEW_LINE .
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -722,7 +724,7 @@ class TemplateBlockParser {
   }
   dynamic parse_singleLine() {
     // TERMINAL
-    // singleLine <- singleLineParts ;
+    // singleLine <- singleLineParts
     var $$;
     // singleLineParts
     $$ = parse_singleLineParts();
@@ -735,7 +737,7 @@ class TemplateBlockParser {
   }
   dynamic parse_singleLineParts() {
     // TERMINAL
-    // singleLineParts <- (singleLineKey / singleLinePart)+ ;
+    // singleLineParts <- (singleLineKey / singleLinePart)+
     var $$;
     // (singleLineKey / singleLinePart)+
     var testing0;
@@ -770,7 +772,7 @@ class TemplateBlockParser {
   }
   dynamic parse_singleLineKey() {
     // TERMINAL
-    // singleLineKey <- "{{" IDENT "}}" ;
+    // singleLineKey <- "{{" IDENT "}}"
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -808,7 +810,7 @@ class TemplateBlockParser {
   }
   dynamic parse_singleLinePart() {
     // TERMINAL
-    // singleLinePart <- !singleLineKey !NEW_LINE . ;
+    // singleLinePart <- !singleLineKey !NEW_LINE .
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -868,7 +870,7 @@ class TemplateBlockParser {
   }
   dynamic parse_emptyLine() {
     // TERMINAL
-    // emptyLine <- &NEW_LINE ;
+    // emptyLine <- &NEW_LINE
     var $$;
     // &NEW_LINE
     var ch0 = _ch;
@@ -891,7 +893,7 @@ class TemplateBlockParser {
   }
   dynamic parse_EOF() {
     // TERMINAL
-    // EOF <- !. ;
+    // EOF <- !.
     var $$;
     // !.
     var ch0 = _ch;
@@ -910,7 +912,7 @@ class TemplateBlockParser {
   }
   dynamic parse_IDENT() {
     // TERMINAL
-    // IDENT <- IDENT_START IDENT_CONT* ;
+    // IDENT <- IDENT_START IDENT_CONT*
     var $$;
     var ch0 = _ch;
     var pos0 = _inputPos;
@@ -955,23 +957,35 @@ class TemplateBlockParser {
   }
   dynamic parse_IDENT_START() {
     // TERMINAL
-    // IDENT_START <- [A-Za-z] ;
+    // IDENT_START <- [A-Za-z] / "_"
     var $$;
-    // [A-Za-z]
-    $$ = _matchMapping(65, 122, _mapping0);
+    while (true) {
+      // [A-Za-z]
+      $$ = _matchMapping(65, 122, _mapping0);
+      if (success) break;
+      // "_"
+      $$ = _matchString('_', const ["_"]);
+      break;
+    }
     return $$;
   }
   dynamic parse_IDENT_CONT() {
     // TERMINAL
-    // IDENT_CONT <- [0-z] ;
+    // IDENT_CONT <- [0-9A-Za-z] / "_"
     var $$;
-    // [0-z]
-    $$ = _matchRange(48, 122);
+    while (true) {
+      // [0-9A-Za-z]
+      $$ = _matchMapping(48, 122, _mapping1);
+      if (success) break;
+      // "_"
+      $$ = _matchString('_', const ["_"]);
+      break;
+    }
     return $$;
   }
   dynamic parse_NEW_LINE() {
     // TERMINAL
-    // NEW_LINE <- "\n" / "\r\n" / "\r" ;
+    // NEW_LINE <- "\n" / "\r\n" / "\r"
     var $$;
     while (true) {
       // "\n"

@@ -3,7 +3,7 @@ template_block
 
 The 'template block' is a template engine for the code generators with a very simple syntax.
 
-Version: 0.1.0
+Version: 0.1.2
 
 ```dart
 import "package:template_block/template_block.dart";
@@ -118,9 +118,9 @@ EOF <- !.
 
 IDENT <- IDENT_START IDENT_CONT*
 
-IDENT_START <- [A-Za-z]
+IDENT_START <- [A-Za-z] / "_"
 
-IDENT_CONT <- [0-z]
+IDENT_CONT <- [0-9A-Za-z] / "_"
 
 NEW_LINE <- "\n" / "\r\n" / "\r"
 ```
