@@ -11,11 +11,11 @@ List<_TemplateLine> parse(TemplateBlock template) {
   var result = parse_template();
   if (!success) {
     if(!expected.isEmpty) {
-      var str = expected.map((s) => Strings.printable(s)).join('\', \'');
+      var str = expected.map((s) => toPrintable(s)).join('\', \'');
       throw 'Parser error at ($line, $column): expected \'$str\' but found \'$unexpected\'';
     } else {
       if(!unexpected.isEmpty) {
-        throw 'Parser error at ($line, $column): unexpected "${Strings.printable(unexpected)}"';
+        throw 'Parser error at ($line, $column): unexpected "${toPrintable(unexpected)}"';
       } else {
         throw 'Parser error at ($line, $column): unexpected end of file';
       }
@@ -41,19 +41,13 @@ _TemplateSingleLine _addSingleLine(List parts) {
 }
 
 template <-
-  ((lastLine / multiLine / singleLine / emptyLine) (NEW_LINE !EOF)? { $$ = $1; } )* EOF { $$ = $1; }
-
-lastLine <-
-  NEW_LINE &EOF { $$ = _addSingleLine(const [""]); }
+  ((LAST_LINE / multiLine / singleLine / EMPTY_LINE) (NEW_LINE !EOF)? { $$ = $1; } )* EOF { $$ = $1; }
 
 multiLine <-
-  multiLinePrefix* multiLineKey multiLineSuffix* { $$ = _addMultiLine($1, $2, $3); }
+  multiLinePrefix* MULTI_LINE_KEY multiLineSuffix* { $$ = _addMultiLine($1, $2, $3); }
 
 multiLinePrefix <-
-  !multiLineKey !NEW_LINE . { $$ = $3; } 
-
-multiLineKey <-
-  '{{#' IDENT '}}' { $$ = $2; }
+  !MULTI_LINE_KEY !NEW_LINE . { $$ = $3; } 
 
 multiLineSuffix <-
   !NEW_LINE . { $$ = $2; }
@@ -62,31 +56,38 @@ singleLine <-
   singleLineParts { $$ = _addSingleLine($1); }
 
 singleLineParts <-
-  (singleLineKey / singleLinePart)+
+  (SINGLE_LINE_KEY / singleLinePart)+
 
-singleLineKey <-
-  '{{' IDENT '}}' { $$ = _template._addKey($2); }
-  
 singleLinePart <-
-  !singleLineKey !NEW_LINE . { $$ = $3; }
+  !SINGLE_LINE_KEY !NEW_LINE . { $$ = $3; }
 
-emptyLine <-
-  &NEW_LINE { $$ = _addSingleLine(const [""]); }
-
-EOF <-
-  !.
+# Tokens
 
 IDENT <-
   IDENT_START IDENT_CONT* { $$ = _flatten([$1, $2]).join(); }
 
 IDENT_START <-
-  [a-zA-Z] / '_'
+  [a-zA-Z\-]
 
 IDENT_CONT <-
-  [a-zA-Z0-9] / '_'
+  [a-zA-Z0-9\-]
+
+EMPTY_LINE <-
+  &NEW_LINE { $$ = _addSingleLine(const [""]); }
+
+EOF <-
+  !.
+
+LAST_LINE <-
+  NEW_LINE &EOF { $$ = _addSingleLine(const [""]); }
+
+MULTI_LINE_KEY <-
+  '{{#' IDENT '}}' { $$ = $2; }
 
 NEW_LINE <-
   '\n'
   / '\r\n'
   / '\r'
   
+SINGLE_LINE_KEY <-
+  '{{' IDENT '}}' { $$ = _template._addKey($2); }
