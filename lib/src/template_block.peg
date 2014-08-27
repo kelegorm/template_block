@@ -67,10 +67,10 @@ IDENT <-
   IDENT_START IDENT_CONT* { $$ = _flatten([$1, $2]).join(); }
 
 IDENT_START <-
-  [a-zA-Z\-]
+  [a-zA-Z] / '_'
 
 IDENT_CONT <-
-  [a-zA-Z0-9\-]
+  [a-zA-Z0-9] / '_'
 
 EMPTY_LINE <-
   &NEW_LINE { $$ = _addSingleLine(const [""]); }
