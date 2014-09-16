@@ -3,7 +3,7 @@ template_block
 
 The 'template block' is a template engine for the code generators with a very simple syntax.
 
-Version: 0.1.4
+Version: 0.1.5
 
 ```dart
 import "package:template_block/template_block.dart";

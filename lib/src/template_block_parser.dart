@@ -4,733 +4,799 @@
 part of template_block;
 class TemplateBlockParser {
   static const int EOF = -1;
+  static final List<String> _ascii = new List<String>.generate(128, (c) => new String.fromCharCode(c));
   static final List<bool> _lookahead = _unmap([0x7ffe03ff, 0x7ffd0fff, 0x13fff]);
-  // '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
   static final List<bool> _mapping0 = _unmap([0x7ffe03ff, 0x7ffc0fff, 0x1fff]);
-  // 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
   static final List<bool> _mapping1 = _unmap([0x3ffffff, 0x7fffffe]);
-  bool success;
+  static final List<int> _strings0 = <int>[123, 123, 35];
+  static final List<int> _strings1 = <int>[125, 125];
+  static final List<int> _strings2 = <int>[13, 10];
+  static final List<int> _strings3 = <int>[123, 123];
+  static final List<String> _expect0 = <String>["NEW_LINE"];
+  static final List<String> _expect1 = <String>["EMPTY_LINE"];
+  static final List<String> _expect2 = <String>["EOF"];
+  static final List<String> _expect3 = <String>["IDENT_START"];
+  static final List<String> _expect4 = <String>["IDENT_CONT"];
+  static final List<String> _expect5 = <String>["IDENT"];
+  static final List<String> _expect6 = <String>["LAST_LINE"];
+  static final List<String> _expect7 = <String>["{{#"];
+  static final List<String> _expect8 = <String>["{{"];
+  static final List<String> _expect9 = <String>[null];
+  static final List<String> _expect10 = <String>[null, "{{"];
+  static final List<String> _expect11 = <String>[null, "EMPTY_LINE", "LAST_LINE", "{{", "{{#"];
   List _cache;
   int _cachePos;
   List<int> _cacheRule;
   List<int> _cacheState;
   int _ch;
   int _column;
+  int _cursor;
   List<String> _expected;
   int _failurePos;
-  int _flag;
   int _inputLen;
-  int _inputPos;
   int _line;
+  List<int> _runes;
+  bool success;
   int _testing;
-  String _text;
-
+  String _token;
+  int _tokenLevel;
+  int _tokenStart;
+  
   TemplateBlockParser(String text) {
     if (text == null) {
       throw new ArgumentError('text: $text');
-    }
-    _text = text;
-    _inputLen = _text.length;
+    }    
+    _runes = _toRunes(text);
+    _inputLen = _runes.length;
     if (_inputLen >= 0x3fffffe8 / 32) {
       throw new StateError('File size to big: $_inputLen');
-    }
-    reset(0);
+    }  
+    reset(0);    
   }
-
-  int get column {
-    if (_column == -1) {
-      _calculatePos(_failurePos);
-    }
-    return _column;
-  }
-
-  int get line {
-    if (_line == -1) {
-      _calculatePos(_failurePos);
-    }
-    return _line;
-  }
-
-  dynamic parse_EMPTY_LINE() {
-    // TERMINAL
-    // EMPTY_LINE <- &NEW_LINE
+  
+  int get column { 
+    if (_column == -1) { 
+      _calculatePos(_failurePos); 
+    } 
+    return _column;       
+  } 
+   
+  int get line { 
+    if (_line == -1) { 
+      _calculatePos(_failurePos); 
+    } 
+    return _line;       
+  } 
+   
+  dynamic _parse_EMPTY_LINE() {
     var $$;
-    // &NEW_LINE
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    var testing0 = _testing;
+    if (_tokenLevel++ == 0) {  
+      _token = "EMPTY_LINE";  
+      _tokenStart = _cursor;  
+    }  
+    var ch0 = _ch, pos0 = _cursor, testing0 = _testing;
     _testing = _inputLen + 1;
-    // NEW_LINE
-    $$ = parse_NEW_LINE();
+    $$ = null;
+    success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+    if (success) $$ = _parse_NEW_LINE();    
+    if (!success) {    
+      if (_cursor > _testing) _failure(_expect0);
+    }
     _ch = ch0;
-    _inputPos = pos0;
+    _cursor = pos0; 
     _testing = testing0;
     $$ = null;
-    if (!success && _inputPos > _testing) _failure();
-    if (success) {
-      // &NEW_LINE
+    if (success) {    
       final $1 = $$;
-      $$ = _addSingleLine(const [""]);
+      $$ = _addSingleLine(const [""]);    
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect1);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
     }
     return $$;
   }
-
-  dynamic parse_EOF() {
-    // TERMINAL
-    // EOF <- !.
+  
+  dynamic _parse_EOF() {
     var $$;
-    // !.
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    var testing0 = _testing;
+    if (_tokenLevel++ == 0) {  
+      _token = "EOF";  
+      _tokenStart = _cursor;  
+    }  
+    var ch0 = _ch, pos0 = _cursor, testing0 = _testing; 
     _testing = _inputLen + 1;
-    // .
     $$ = _matchAny();
     _ch = ch0;
-    _inputPos = pos0;
+    _cursor = pos0; 
     _testing = testing0;
     $$ = null;
     success = !success;
-    if (!success && _inputPos > _testing) _failure();
+    if (!success && _cursor > _testing) {
+      _failure(_expect2);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
+    }
     return $$;
   }
-
-  dynamic parse_IDENT() {
-    // TERMINAL
-    // IDENT <- IDENT_START IDENT_CONT*
+  
+  dynamic _parse_IDENT() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // IDENT_START
-      $$ = parse_IDENT_START();
-      if (!success) break;
-      var seq = new List(2);
-      seq[0] = $$;
-      // IDENT_CONT*
-      var testing0 = _testing;
+    if (_tokenLevel++ == 0) {  
+      _token = "IDENT";  
+      _tokenStart = _cursor;  
+    }  
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      $$ = null;
+      success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
+      if (success) $$ = _parse_IDENT_START();    
+      if (!success) {    
+        if (_cursor > _testing) _failure(_expect3);
+        break;  
+      }
+      var seq = new List(2)..[0] = $$;
+      var testing0 = _testing; 
       for (var reps = []; ; ) {
-        _testing = _inputPos;
-        // IDENT_CONT
-        $$ = parse_IDENT_CONT();
-        if (success) {
+        _testing = _cursor;
+        $$ = null;
+        success = _ch >= 48 && _ch <= 122 && _lookahead[_ch + -48];
+        if (success) $$ = _parse_IDENT_CONT();    
+        if (!success) {    
+          if (_cursor > _testing) _failure(_expect4);
+        }
+        if (success) {  
           reps.add($$);
         } else {
           success = true;
           _testing = testing0;
           $$ = reps;
-          break;
+          break; 
         }
       }
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {
-        // IDENT_START
+      if (success) {    
         final $1 = seq[0];
-        // IDENT_CONT*
         final $2 = seq[1];
-        $$ = _flatten([$1, $2]).join();
+        $$ = _flatten([$1, $2]).join();    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect5);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
     }
     return $$;
   }
-
-  dynamic parse_IDENT_CONT() {
-    // TERMINAL
-    // IDENT_CONT <- [0-9A-Za-z] / "_"
+  
+  dynamic _parse_IDENT_CONT() {
     var $$;
+    if (_tokenLevel++ == 0) {  
+      _token = "IDENT_CONT";  
+      _tokenStart = _cursor;  
+    }  
     while (true) {
-      // [0-9A-Za-z]
       $$ = _matchMapping(48, 122, _mapping0);
       if (success) break;
-      // "_"
-      $$ = _matchString('_', const ["_"]);
+      $$ = _matchChar(95, '_');
       break;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect4);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
     }
     return $$;
   }
-
-  dynamic parse_IDENT_START() {
-    // TERMINAL
-    // IDENT_START <- [A-Za-z] / "_"
+  
+  dynamic _parse_IDENT_START() {
     var $$;
+    if (_tokenLevel++ == 0) {  
+      _token = "IDENT_START";  
+      _tokenStart = _cursor;  
+    }  
     while (true) {
-      // [A-Za-z]
       $$ = _matchMapping(65, 122, _mapping1);
       if (success) break;
-      // "_"
-      $$ = _matchString('_', const ["_"]);
+      $$ = _matchChar(95, '_');
       break;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect3);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
     }
     return $$;
   }
-
-  dynamic parse_LAST_LINE() {
-    // TERMINAL
-    // LAST_LINE <- NEW_LINE &EOF
+  
+  dynamic _parse_LAST_LINE() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // NEW_LINE
-      $$ = parse_NEW_LINE();
-      if (!success) break;
-      var seq = new List(2);
-      seq[0] = $$;
-      // &EOF
-      var ch1 = _ch;
-      var pos1 = _inputPos;
-      var testing0 = _testing;
+    if (_tokenLevel++ == 0) {  
+      _token = "LAST_LINE";  
+      _tokenStart = _cursor;  
+    }  
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      $$ = null;
+      success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+      if (success) $$ = _parse_NEW_LINE();    
+      if (!success) {    
+        if (_cursor > _testing) _failure(_expect0);
+        break;  
+      }
+      var seq = new List(2)..[0] = $$;
+      var ch1 = _ch, pos1 = _cursor, testing0 = _testing;
       _testing = _inputLen + 1;
-      // EOF
-      $$ = parse_EOF();
+      $$ = _parse_EOF();
       _ch = ch1;
-      _inputPos = pos1;
+      _cursor = pos1; 
       _testing = testing0;
       $$ = null;
-      if (!success && _inputPos > _testing) _failure();
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {
-        // NEW_LINE
+      if (success) {    
         final $1 = seq[0];
-        // &EOF
         final $2 = seq[1];
-        $$ = _addSingleLine(const [""]);
+        $$ = _addSingleLine(const [""]);    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect6);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
     }
     return $$;
   }
-
-  dynamic parse_MULTI_LINE_KEY() {
-    // TERMINAL
-    // MULTI_LINE_KEY <- "{{#" IDENT "}}"
+  
+  dynamic _parse_MULTI_LINE_KEY() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // "{{#"
-      $$ = _matchString('{{#', const ["{{#"]);
+    if (_tokenLevel++ == 0) {  
+      _token = "{{#";  
+      _tokenStart = _cursor;  
+    }  
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      $$ = _matchString(_strings0, '{{#');
       if (!success) break;
-      var seq = new List(3);
-      seq[0] = $$;
-      // IDENT
-      $$ = parse_IDENT();
-      if (!success) break;
+      var seq = new List(3)..[0] = $$;
+      $$ = null;
+      success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
+      if (success) $$ = _parse_IDENT();    
+      if (!success) {    
+        if (_cursor > _testing) _failure(_expect5);
+        break;  
+      }
       seq[1] = $$;
-      // "}}"
-      $$ = _matchString('}}', const ["}}"]);
+      $$ = _matchString(_strings1, '}}');
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {
-        // "{{#"
+      if (success) {    
         final $1 = seq[0];
-        // IDENT
         final $2 = seq[1];
-        // "}}"
         final $3 = seq[2];
-        $$ = $2;
+        $$ = $2;    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect7);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
     }
     return $$;
   }
-
-  dynamic parse_NEW_LINE() {
-    // TERMINAL
-    // NEW_LINE <- "\n" / "\r\n" / "\r"
+  
+  dynamic _parse_NEW_LINE() {
     var $$;
+    if (_tokenLevel++ == 0) {  
+      _token = "NEW_LINE";  
+      _tokenStart = _cursor;  
+    }  
     while (true) {
-      // "\n"
-      $$ = _matchString('\n', const ["\\n"]);
+      $$ = _matchChar(10, '\n');
       if (success) break;
-      // "\r\n"
-      $$ = _matchString('\r\n', const ["\\r\\n"]);
+      $$ = _matchString(_strings2, '\r\n');
       if (success) break;
-      // "\r"
-      $$ = _matchString('\r', const ["\\r"]);
+      $$ = _matchChar(13, '\r');
       break;
     }
+    if (!success && _cursor > _testing) {
+      _failure(_expect0);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
+    }
     return $$;
   }
-
-  dynamic parse_SINGLE_LINE_KEY() {
-    // TERMINAL
-    // SINGLE_LINE_KEY <- "{{" IDENT "}}"
+  
+  dynamic _parse_SINGLE_LINE_KEY() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // "{{"
-      $$ = _matchString('{{', const ["{{"]);
+    if (_tokenLevel++ == 0) {  
+      _token = "{{";  
+      _tokenStart = _cursor;  
+    }  
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      $$ = _matchString(_strings3, '{{');
       if (!success) break;
-      var seq = new List(3);
-      seq[0] = $$;
-      // IDENT
-      $$ = parse_IDENT();
-      if (!success) break;
+      var seq = new List(3)..[0] = $$;
+      $$ = null;
+      success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
+      if (success) $$ = _parse_IDENT();    
+      if (!success) {    
+        if (_cursor > _testing) _failure(_expect5);
+        break;  
+      }
       seq[1] = $$;
-      // "}}"
-      $$ = _matchString('}}', const ["}}"]);
+      $$ = _matchString(_strings1, '}}');
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {
-        // "{{"
+      if (success) {    
         final $1 = seq[0];
-        // IDENT
         final $2 = seq[1];
-        // "}}"
         final $3 = seq[2];
-        $$ = _template._addKey($2);
+        $$ = _template._addKey($2);    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect8);
+    }
+    if (--_tokenLevel == 0) {
+      _token = null;
+      _tokenStart = null;
     }
     return $$;
   }
-
-  dynamic parse_multiLine() {
-    // NONTERMINAL
-    // multiLine <- multiLinePrefix* MULTI_LINE_KEY multiLineSuffix*
+  
+  dynamic _parse_multiLine() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // multiLinePrefix*
-      var testing0 = _testing;
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      var testing0 = _testing; 
       for (var reps = []; ; ) {
-        _testing = _inputPos;
-        // multiLinePrefix
-        $$ = parse_multiLinePrefix();
-        if (success) {
+        _testing = _cursor;
+        $$ = _parse_multiLinePrefix();
+        if (success) {  
           reps.add($$);
         } else {
           success = true;
           _testing = testing0;
           $$ = reps;
-          break;
+          break; 
         }
       }
       if (!success) break;
-      var seq = new List(3);
-      seq[0] = $$;
-      // MULTI_LINE_KEY
-      $$ = parse_MULTI_LINE_KEY();
-      if (!success) break;
+      var seq = new List(3)..[0] = $$;
+      $$ = null;
+      success = _ch == 123; 
+      if (success) $$ = _parse_MULTI_LINE_KEY();
+      if (!success) {
+        if (_cursor > _testing) _failure(_expect7);  
+        break;  
+      }
       seq[1] = $$;
-      // multiLineSuffix*
-      var testing1 = _testing;
+      var testing1 = _testing; 
       for (var reps = []; ; ) {
-        _testing = _inputPos;
-        // multiLineSuffix
-        $$ = parse_multiLineSuffix();
-        if (success) {
+        _testing = _cursor;
+        $$ = _parse_multiLineSuffix();
+        if (success) {  
           reps.add($$);
         } else {
           success = true;
           _testing = testing1;
           $$ = reps;
-          break;
+          break; 
         }
       }
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {
-        // multiLinePrefix*
+      if (success) {    
         final $1 = seq[0];
-        // MULTI_LINE_KEY
         final $2 = seq[1];
-        // multiLineSuffix*
         final $3 = seq[2];
-        $$ = _addMultiLine($1, $2, $3);
+        $$ = _addMultiLine($1, $2, $3);    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect7);
     }
     return $$;
   }
-
-  dynamic parse_multiLinePrefix() {
-    // NONTERMINAL
-    // multiLinePrefix <- !MULTI_LINE_KEY !NEW_LINE .
+  
+  dynamic _parse_multiLinePrefix() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // !MULTI_LINE_KEY
-      var ch1 = _ch;
-      var pos1 = _inputPos;
-      var testing0 = _testing;
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      var ch1 = _ch, pos1 = _cursor, testing0 = _testing; 
       _testing = _inputLen + 1;
-      // MULTI_LINE_KEY
-      $$ = parse_MULTI_LINE_KEY();
+      $$ = null;
+      success = _ch == 123; 
+      if (success) $$ = _parse_MULTI_LINE_KEY();
+      if (!success) {
+        if (_cursor > _testing) _failure(_expect7);  
+      }
       _ch = ch1;
-      _inputPos = pos1;
+      _cursor = pos1; 
       _testing = testing0;
       $$ = null;
       success = !success;
-      if (!success && _inputPos > _testing) _failure();
       if (!success) break;
-      var seq = new List(3);
-      seq[0] = $$;
-      // !NEW_LINE
-      var ch2 = _ch;
-      var pos2 = _inputPos;
-      var testing1 = _testing;
+      var seq = new List(3)..[0] = $$;
+      var ch2 = _ch, pos2 = _cursor, testing1 = _testing; 
       _testing = _inputLen + 1;
-      // NEW_LINE
-      $$ = parse_NEW_LINE();
+      $$ = null;
+      success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+      if (success) $$ = _parse_NEW_LINE();    
+      if (!success) {    
+        if (_cursor > _testing) _failure(_expect0);
+      }
       _ch = ch2;
-      _inputPos = pos2;
+      _cursor = pos2; 
       _testing = testing1;
       $$ = null;
       success = !success;
-      if (!success && _inputPos > _testing) _failure();
       if (!success) break;
       seq[1] = $$;
-      // .
       $$ = _matchAny();
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {
-        // !MULTI_LINE_KEY
+      if (success) {    
         final $1 = seq[0];
-        // !NEW_LINE
         final $2 = seq[1];
-        // .
         final $3 = seq[2];
-        $$ = $3;
+        $$ = $3;    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect9);
     }
     return $$;
   }
-
-  dynamic parse_multiLineSuffix() {
-    // NONTERMINAL
-    // multiLineSuffix <- !NEW_LINE .
+  
+  dynamic _parse_multiLineSuffix() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // !NEW_LINE
-      var ch1 = _ch;
-      var pos1 = _inputPos;
-      var testing0 = _testing;
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      var ch1 = _ch, pos1 = _cursor, testing0 = _testing; 
       _testing = _inputLen + 1;
-      // NEW_LINE
-      $$ = parse_NEW_LINE();
+      $$ = null;
+      success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+      if (success) $$ = _parse_NEW_LINE();    
+      if (!success) {    
+        if (_cursor > _testing) _failure(_expect0);
+      }
       _ch = ch1;
-      _inputPos = pos1;
+      _cursor = pos1; 
       _testing = testing0;
       $$ = null;
       success = !success;
-      if (!success && _inputPos > _testing) _failure();
       if (!success) break;
-      var seq = new List(2);
-      seq[0] = $$;
-      // .
+      var seq = new List(2)..[0] = $$;
       $$ = _matchAny();
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {
-        // !NEW_LINE
+      if (success) {    
         final $1 = seq[0];
-        // .
         final $2 = seq[1];
-        $$ = $2;
+        $$ = $2;    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect9);
     }
     return $$;
   }
-
-  dynamic parse_singleLine() {
-    // NONTERMINAL
-    // singleLine <- singleLineParts
+  
+  dynamic _parse_singleLine() {
     var $$;
-    // singleLineParts
-    $$ = parse_singleLineParts();
-    if (success) {
-      // singleLineParts
+    $$ = _parse_singleLineParts();
+    if (success) {    
       final $1 = $$;
-      $$ = _addSingleLine($1);
+      $$ = _addSingleLine($1);    
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect10);
     }
     return $$;
   }
-
-  dynamic parse_singleLinePart() {
-    // NONTERMINAL
-    // singleLinePart <- !SINGLE_LINE_KEY !NEW_LINE .
+  
+  dynamic _parse_singleLinePart() {
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // !SINGLE_LINE_KEY
-      var ch1 = _ch;
-      var pos1 = _inputPos;
-      var testing0 = _testing;
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      var ch1 = _ch, pos1 = _cursor, testing0 = _testing; 
       _testing = _inputLen + 1;
-      // SINGLE_LINE_KEY
-      $$ = parse_SINGLE_LINE_KEY();
+      $$ = null;
+      success = _ch == 123; 
+      if (success) $$ = _parse_SINGLE_LINE_KEY();
+      if (!success) {
+        if (_cursor > _testing) _failure(_expect8);  
+      }
       _ch = ch1;
-      _inputPos = pos1;
+      _cursor = pos1; 
       _testing = testing0;
       $$ = null;
       success = !success;
-      if (!success && _inputPos > _testing) _failure();
       if (!success) break;
-      var seq = new List(3);
-      seq[0] = $$;
-      // !NEW_LINE
-      var ch2 = _ch;
-      var pos2 = _inputPos;
-      var testing1 = _testing;
+      var seq = new List(3)..[0] = $$;
+      var ch2 = _ch, pos2 = _cursor, testing1 = _testing; 
       _testing = _inputLen + 1;
-      // NEW_LINE
-      $$ = parse_NEW_LINE();
+      $$ = null;
+      success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+      if (success) $$ = _parse_NEW_LINE();    
+      if (!success) {    
+        if (_cursor > _testing) _failure(_expect0);
+      }
       _ch = ch2;
-      _inputPos = pos2;
+      _cursor = pos2; 
       _testing = testing1;
       $$ = null;
       success = !success;
-      if (!success && _inputPos > _testing) _failure();
       if (!success) break;
       seq[1] = $$;
-      // .
       $$ = _matchAny();
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {
-        // !SINGLE_LINE_KEY
+      if (success) {    
         final $1 = seq[0];
-        // !NEW_LINE
         final $2 = seq[1];
-        // .
         final $3 = seq[2];
-        $$ = $3;
+        $$ = $3;    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect9);
     }
     return $$;
   }
-
-  dynamic parse_singleLineParts() {
-    // NONTERMINAL
-    // singleLineParts <- (SINGLE_LINE_KEY / singleLinePart)+
+  
+  dynamic _parse_singleLineParts() {
     var $$;
-    // (SINGLE_LINE_KEY / singleLinePart)+
     var testing0;
-    for (var first = true, reps; ;) {
-      while (true) {
-        // SINGLE_LINE_KEY
-        $$ = parse_SINGLE_LINE_KEY();
-        if (success) break;
-        // singleLinePart
-        $$ = parse_singleLinePart();
-        break;
-      }
+    for (var first = true, reps; ;) {  
+      while (true) {  
+        $$ = null;  
+        success = _ch == 123;   
+        if (success) $$ = _parse_SINGLE_LINE_KEY();  
+        if (!success) {  
+          if (_cursor > _testing) _failure(_expect8);    
+        }  
+        if (success) break;  
+        $$ = _parse_singleLinePart();  
+        break;  
+      }  
+      if (!success && _cursor > _testing) {  
+        _failure(_expect10);  
+      }  
       if (success) {
-       if (first) {
+       if (first) {      
           first = false;
           reps = [$$];
-          testing0 = _testing;
+          testing0 = _testing;                  
         } else {
           reps.add($$);
         }
-        _testing = _inputPos;
+        _testing = _cursor;   
       } else {
         success = !first;
-        if (success) {
+        if (success) {      
           _testing = testing0;
-          $$ = reps;
+          $$ = reps;      
         } else $$ = null;
         break;
-      }
+      }  
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect10);
     }
     return $$;
   }
-
+  
   dynamic parse_template() {
-    // NONTERMINAL
-    // template <- ((LAST_LINE / multiLine / singleLine / EMPTY_LINE) (NEW_LINE !EOF)?)* EOF
     var $$;
-    var ch0 = _ch;
-    var pos0 = _inputPos;
-    while (true) {
-      // ((LAST_LINE / multiLine / singleLine / EMPTY_LINE) (NEW_LINE !EOF)?)*
-      var testing0 = _testing;
+    var ch0 = _ch, pos0 = _cursor;
+    while (true) {  
+      var testing0 = _testing; 
       for (var reps = []; ; ) {
-        _testing = _inputPos;
-        var ch1 = _ch;
-        var pos1 = _inputPos;
-        while (true) {
+        _testing = _cursor;
+        var ch1 = _ch, pos1 = _cursor;
+        while (true) {  
           while (true) {
-            // LAST_LINE
-            $$ = parse_LAST_LINE();
+            $$ = null;
+            success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+            if (success) $$ = _parse_LAST_LINE();    
+            if (!success) {    
+              if (_cursor > _testing) _failure(_expect6);
+            }
             if (success) break;
-            // multiLine
-            $$ = parse_multiLine();
+            $$ = _parse_multiLine();
             if (success) break;
-            // singleLine
-            $$ = parse_singleLine();
+            $$ = _parse_singleLine();
             if (success) break;
-            // EMPTY_LINE
-            $$ = parse_EMPTY_LINE();
+            $$ = null;
+            success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+            if (success) $$ = _parse_EMPTY_LINE();    
+            if (!success) {    
+              if (_cursor > _testing) _failure(_expect1);
+            }
             break;
           }
+          if (!success && _cursor > _testing) {
+            _failure(_expect11);
+          }
           if (!success) break;
-          var seq = new List(2);
-          seq[0] = $$;
-          // (NEW_LINE !EOF)?
+          var seq = new List(2)..[0] = $$;
           var testing1 = _testing;
-          _testing = _inputPos;
-          var ch2 = _ch;
-          var pos2 = _inputPos;
-          while (true) {
-            // NEW_LINE
-            $$ = parse_NEW_LINE();
-            if (!success) break;
-            var seq = new List(2);
-            seq[0] = $$;
-            // !EOF
-            var ch3 = _ch;
-            var pos3 = _inputPos;
-            var testing2 = _testing;
+          _testing = _cursor;
+          var ch2 = _ch, pos2 = _cursor;
+          while (true) {  
+            $$ = null;
+            success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
+            if (success) $$ = _parse_NEW_LINE();    
+            if (!success) {    
+              if (_cursor > _testing) _failure(_expect0);
+              break;  
+            }
+            var seq = new List(2)..[0] = $$;
+            var ch3 = _ch, pos3 = _cursor, testing2 = _testing; 
             _testing = _inputLen + 1;
-            // EOF
-            $$ = parse_EOF();
+            $$ = _parse_EOF();
             _ch = ch3;
-            _inputPos = pos3;
+            _cursor = pos3; 
             _testing = testing2;
             $$ = null;
             success = !success;
-            if (!success && _inputPos > _testing) _failure();
             if (!success) break;
             seq[1] = $$;
             $$ = seq;
-            break;
+            break;  
           }
           if (!success) {
             _ch = ch2;
-            _inputPos = pos2;
+            _cursor = pos2;
           }
-          success = true;
+          if (!success && _cursor > _testing) {
+            _failure(_expect0);
+          }
+          success = true; 
           _testing = testing1;
           if (!success) break;
           seq[1] = $$;
           $$ = seq;
-          if (success) {
-            // LAST_LINE / multiLine / singleLine / EMPTY_LINE
+          if (success) {    
             final $1 = seq[0];
-            // (NEW_LINE !EOF)?
             final $2 = seq[1];
-            $$ = $1;
+            $$ = $1;    
           }
-          break;
+          break;  
         }
         if (!success) {
           _ch = ch1;
-          _inputPos = pos1;
+          _cursor = pos1;
         }
-        if (success) {
+        if (!success && _cursor > _testing) {
+          _failure(_expect11);
+        }
+        if (success) {  
           reps.add($$);
         } else {
           success = true;
           _testing = testing0;
           $$ = reps;
-          break;
+          break; 
         }
       }
       if (!success) break;
-      var seq = new List(2);
-      seq[0] = $$;
-      // EOF
-      $$ = parse_EOF();
+      var seq = new List(2)..[0] = $$;
+      $$ = _parse_EOF();
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {
-        // ((LAST_LINE / multiLine / singleLine / EMPTY_LINE) (NEW_LINE !EOF)?)*
+      if (success) {    
         final $1 = seq[0];
-        // EOF
         final $2 = seq[1];
-        $$ = $1;
+        $$ = $1;    
       }
-      break;
+      break;  
     }
     if (!success) {
       _ch = ch0;
-      _inputPos = pos0;
+      _cursor = pos0;
+    }
+    if (!success && _cursor > _testing) {
+      _failure(_expect2);
     }
     return $$;
   }
-
-  void _addToCache(dynamic result, int start, int id) {
+  
+  void _addToCache(dynamic result, int start, int id) {  
     var cached = _cache[start];
     if (cached == null) {
       _cacheRule[start] = id;
-      _cache[start] = [result, _inputPos, success];
-    } else {
+      _cache[start] = [result, _cursor, success];
+    } else {    
       var slot = start >> 5;
-      var r1 = (slot << 5) & 0x3fffffff;
-      var mask = 1 << (start - r1);
+      var r1 = (slot << 5) & 0x3fffffff;    
+      var mask = 1 << (start - r1);    
       if ((_cacheState[slot] & mask) == 0) {
-        _cacheState[slot] |= mask;
+        _cacheState[slot] |= mask;   
         cached = [new List.filled(2, 0), new Map<int, List>()];
-        _cache[start] = cached;
+        _cache[start] = cached;                                      
       }
       slot = id >> 5;
-      r1 = (slot << 5) & 0x3fffffff;
-      mask = 1 << (id - r1);
+      r1 = (slot << 5) & 0x3fffffff;    
+      mask = 1 << (id - r1);    
       cached[0][slot] |= mask;
-      cached[1][id] = [result, _inputPos, success];
+      cached[1][id] = [result, _cursor, success];      
     }
     if (_cachePos < start) {
       _cachePos = start;
-    }
+    }    
   }
-
+  
   void _calculatePos(int pos) {
     if (pos == null || pos < 0 || pos > _inputLen) {
       return;
@@ -738,11 +804,11 @@ class TemplateBlockParser {
     _line = 1;
     _column = 1;
     for (var i = 0; i < _inputLen && i < pos; i++) {
-      var c = _text.codeUnitAt(i);
+      var c = _runes[i];
       if (c == 13) {
         _line++;
         _column = 1;
-        if (i + 1 < _inputLen && _text.codeUnitAt(i + 1) == 10) {
+        if (i + 1 < _inputLen && _runes[i + 1] == 10) {
           i++;
         }
       } else if (c == 10) {
@@ -753,20 +819,55 @@ class TemplateBlockParser {
       }
     }
   }
-
-  void _failure([List<String> expected]) {
-    if (_failurePos > _inputPos) {
+  
+  Iterable _compact(Iterable iterable) {  
+    if (iterable is List) {
+      var hasNull = false;
+      var length = iterable.length;
+      for (var i = 0; i < length; i++) {
+        if (iterable[i] == null) {
+          hasNull = true;
+          break;
+        }
+      }
+      if (!hasNull) {
+        return iterable;
+      }
+      var result = [];
+      for (var i = 0; i < length; i++) {
+        var element = iterable[i];
+        if (element != null) {
+          result.add(element);
+        }
+      }
+      return result;
+    }   
+    var result = [];
+    for (var element in iterable) {   
+      if (element != null) {
+        result.add(element);
+      }
+    }
+    return result;  
+  }
+  
+  void _failure([List<String> expected]) {  
+    if (_failurePos > _cursor) {
       return;
     }
-    if (_inputPos > _failurePos) {
+    if (_cursor > _failurePos) {    
       _expected = [];
-     _failurePos = _inputPos;
+     _failurePos = _cursor;
     }
-    if (expected != null) {
+    if (_token != null) {
+      _expected.add(_token);
+    } else if (expected == null) {
+      _expected.add(null);
+    } else {
       _expected.addAll(expected);
-    }
+    }   
   }
-
+  
   List _flatten(dynamic value) {
     if (value is List) {
       var result = [];
@@ -792,195 +893,267 @@ class TemplateBlockParser {
     }
     return [value];
   }
-
-  dynamic _getFromCache(int id) {
-    var result = _cache[_inputPos];
+  
+  dynamic _getFromCache(int id) {  
+    var result = _cache[_cursor];
     if (result == null) {
       return null;
-    }
-    var slot = _inputPos >> 5;
-    var r1 = (slot << 5) & 0x3fffffff;
-    var mask = 1 << (_inputPos - r1);
+    }    
+    var slot = _cursor >> 5;
+    var r1 = (slot << 5) & 0x3fffffff;  
+    var mask = 1 << (_cursor - r1);
     if ((_cacheState[slot] & mask) == 0) {
-      if (_cacheRule[_inputPos] == id) {
-        _inputPos = result[1];
-        success = result[2];
-        if (_inputPos < _inputLen) {
-          _ch = _text.codeUnitAt(_inputPos);
+      if (_cacheRule[_cursor] == id) {      
+        _cursor = result[1];
+        success = result[2];      
+        if (_cursor < _inputLen) {
+          _ch = _runes[_cursor];
         } else {
           _ch = EOF;
-        }
+        }      
         return result;
       } else {
         return null;
-      }
+      }    
     }
     slot = id >> 5;
-    r1 = (slot << 5) & 0x3fffffff;
+    r1 = (slot << 5) & 0x3fffffff;  
     mask = 1 << (id - r1);
     if ((result[0][slot] & mask) == 0) {
       return null;
     }
-    var data = result[1][id];
-    _inputPos = data[1];
+    var data = result[1][id];  
+    _cursor = data[1];
     success = data[2];
-    if (_inputPos < _inputLen) {
-      _ch = _text.codeUnitAt(_inputPos);
+    if (_cursor < _inputLen) {
+      _ch = _runes[_cursor];
     } else {
       _ch = EOF;
-    }
-    return data;
+    }   
+    return data;  
   }
-
+  
   String _matchAny() {
-    success = _inputPos < _inputLen;
+    success = _cursor < _inputLen;
     if (success) {
-      var result = _text[_inputPos++];
-      if (_inputPos < _inputLen) {
-        _ch = _text.codeUnitAt(_inputPos);
+      String result;
+      if (_ch < 128) {
+        result = _ascii[_ch];  
+      } else {
+        result = new String.fromCharCode(_ch);
+      }    
+      if (++_cursor < _inputLen) {
+        _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }
+      }    
       return result;
-    }
-    if (_inputPos > _testing) {
-      _failure();
-    }
-    return null;
+    }    
+    return null;  
   }
-
-  String _matchChar(int ch, List<String> expected) {
+  
+  String _matchChar(int ch, String string) {
     success = _ch == ch;
     if (success) {
-      var result = _text[_inputPos++];
-      if (_inputPos < _inputLen) {
-        _ch = _text.codeUnitAt(_inputPos);
+      var result = string;  
+      if (++_cursor < _inputLen) {
+        _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }
+      }    
       return result;
-    }
-    if (_inputPos > _testing) {
-      _failure(expected);
-    }
-    return null;
+    }  
+    return null;  
   }
-
+  
   String _matchMapping(int start, int end, List<bool> mapping) {
     success = _ch >= start && _ch <= end;
-    if (success) {
+    if (success) {    
       if(mapping[_ch - start]) {
-        var result = _text[_inputPos++];
-        if (_inputPos < _inputLen) {
-          _ch = _text.codeUnitAt(_inputPos);
+        String result;
+        if (_ch < 128) {
+          result = _ascii[_ch];  
+        } else {
+          result = new String.fromCharCode(_ch);
+        }     
+        if (++_cursor < _inputLen) {
+          _ch = _runes[_cursor];
         } else {
           _ch = EOF;
-        }
+        }      
         return result;
       }
       success = false;
-    }
-    if (_inputPos > _testing) {
-       _failure();
-    }
-    return null;
+    }  
+    return null;  
   }
-
+  
   String _matchRange(int start, int end) {
     success = _ch >= start && _ch <= end;
     if (success) {
-      var result = _text[_inputPos++];
-      if (_inputPos < _inputLen) {
-        _ch = _text.codeUnitAt(_inputPos);
+      String result;
+      if (_ch < 128) {
+        result = _ascii[_ch];  
+      } else {
+        result = new String.fromCharCode(_ch);
+      }        
+      if (++_cursor < _inputLen) {
+        _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }
+      }  
       return result;
-    }
-    if (_inputPos > _testing) {
-      _failure();
-    }
-    return null;
+    }  
+    return null;  
   }
-
+  
   String _matchRanges(List<int> ranges) {
     var length = ranges.length;
     for (var i = 0; i < length; i += 2) {
       if (_ch <= ranges[i + 1]) {
         if (_ch >= ranges[i]) {
-          var result = _text[_inputPos++];
-          if (_inputPos < _inputLen) {
-            _ch = _text.codeUnitAt(_inputPos);
+          String result;
+          if (_ch < 128) {
+            result = _ascii[_ch];  
+          } else {
+            result = new String.fromCharCode(_ch);
+          }          
+          if (++_cursor < _inputLen) {
+            _ch = _runes[_cursor];
           } else {
              _ch = EOF;
           }
-          success = true;
+          success = true;    
           return result;
-        }
-      } else break;
+        }      
+      } else break;  
     }
-    if (_inputPos > _testing) {
-      _failure();
-    }
-    success = false;
-    return null;
+    success = false;  
+    return null;  
   }
-
-  String _matchString(String string, List<String> expected) {
-    success = _text.startsWith(string, _inputPos);
+  
+  String _matchString(List<int> runes, String string) {
+    var length = runes.length;  
+    success = true;  
+    if (_cursor + length < _inputLen) {
+      for (var i = 0; i < length; i++) {
+        if (runes[i] != _runes[_cursor + i]) {
+          success = false;
+          break;
+        }
+      }
+    } else {
+      success = false;
+    }  
     if (success) {
-      _inputPos += string.length;
-      if (_inputPos < _inputLen) {
-        _ch = _text.codeUnitAt(_inputPos);
+      _cursor += length;      
+      if (_cursor < _inputLen) {
+        _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }
-      return string;
-    }
-    if (_inputPos > _testing) {
-      _failure(expected);
-    }
-    return null;
+      }    
+      return string;      
+    }  
+    return null; 
   }
-
-  void _nextChar([int count = 1]) {
+  
+  void _nextChar([int count = 1]) {  
     success = true;
-    _inputPos += count;
-    if (_inputPos < _inputLen) {
-      _ch = _text.codeUnitAt(_inputPos);
+    _cursor += count; 
+    if (_cursor < _inputLen) {
+      _ch = _runes[_cursor];
     } else {
       _ch = EOF;
-    }
+    }    
   }
-
+  
   bool _testChar(int c, int flag) {
     if (c < 0 || c > 127) {
       return false;
-    }
-    int slot = (c & 0xff) >> 6;
-    int mask = 1 << c - ((slot << 6) & 0x3fffffff);
-    if ((flag & mask) != 0) {
+    }    
+    int slot = (c & 0xff) >> 6;  
+    int mask = 1 << c - ((slot << 6) & 0x3fffffff);  
+    if ((flag & mask) != 0) {    
       return true;
     }
-    return false;
+    return false;           
   }
-
+  
   bool _testInput(int flag) {
-    if (_inputPos >= _inputLen) {
+    if (_cursor >= _inputLen) {
       return false;
     }
-    var c = _text.codeUnitAt(_inputPos);
+    var c = _runes[_cursor];
     if (c < 0 || c > 127) {
       return false;
-    }
-    int slot = (c & 0xff) >> 6;
-    int mask = 1 << c - ((slot << 6) & 0x3fffffff);
-    if ((flag & mask) != 0) {
+    }    
+    int slot = (c & 0xff) >> 6;  
+    int mask = 1 << c - ((slot << 6) & 0x3fffffff);  
+    if ((flag & mask) != 0) {    
       return true;
     }
-    return false;
+    return false;           
   }
-
+  
+  int _toRune(String string) {
+    if (string == null) {
+      throw new ArgumentError("string: $string");
+    }
+  
+    var length = string.length;
+    if (length == 0) {
+      throw new StateError("An empty string contains no elements.");
+    }
+  
+    var start = string.codeUnitAt(0);
+    if (length == 1) {
+      return start;
+    }
+  
+    if ((start & 0xFC00) == 0xD800) {
+      var end = string.codeUnitAt(1);
+      if ((end & 0xFC00) == 0xDC00) {
+        return (0x10000 + ((start & 0x3FF) << 10) + (end & 0x3FF));
+      }
+    }
+  
+    return start;
+  }
+  
+  List<int> _toRunes(String string) {
+    if (string == null) {
+      throw new ArgumentError("string: $string");
+    }
+  
+    var length = string.length;
+    if (length == 0) {
+      return const <int>[];
+    }
+  
+    var runes = <int>[];
+    runes.length = length;
+    var i = 0;
+    var pos = 0;
+    for ( ; i < length; pos++) {
+      var start = string.codeUnitAt(i);
+      i++;
+      if ((start & 0xFC00) == 0xD800 && i < length) {
+        var end = string.codeUnitAt(i);
+        if ((end & 0xFC00) == 0xDC00) {
+          runes[pos] = (0x10000 + ((start & 0x3FF) << 10) + (end & 0x3FF));
+          i++;
+        } else {
+          runes[pos] = start;
+        }
+      } else {
+        runes[pos] = start;
+      }
+    }
+  
+    runes.length = pos;
+    return runes;
+  }
+  
   static List<bool> _unmap(List<int> mapping) {
     var length = mapping.length;
     var result = new List<bool>(length * 31);
@@ -993,52 +1166,54 @@ class TemplateBlockParser {
     }
     return result;
   }
-
+  
   List<String> get expected {
-    var set = new Set<String>();
+    var set = new Set<String>();  
     set.addAll(_expected);
     if (set.contains(null)) {
       set.clear();
-    }
+    }  
     var result = set.toList();
-    result.sort();
-    return result;
+    result.sort(); 
+    return result;        
   }
-
+  
   void reset(int pos) {
     if (pos == null) {
       throw new ArgumentError('pos: $pos');
     }
     if (pos < 0 || pos > _inputLen) {
       throw new RangeError('pos');
-    }
-    success = true;
+    }      
+    _cursor = pos;
     _cache = new List(_inputLen + 1);
     _cachePos = -1;
     _cacheRule = new List(_inputLen + 1);
     _cacheState = new List.filled(((_inputLen + 1) >> 5) + 1, 0);
-    _ch = EOF;
-    _column = -1;
+    _ch = EOF;  
+    _column = -1; 
     _expected = [];
-    _failurePos = -1;
-    _flag = 0;
-    _inputPos = pos;
+    _failurePos = -1;    
     _line = -1;
+    success = true;      
     _testing = -1;
-    if (pos < _inputLen) {
-      _ch = _text.codeUnitAt(pos);
-    }
+    _token = null;
+    _tokenLevel = 0;
+    _tokenStart = null;
+    if (_cursor < _inputLen) {
+      _ch = _runes[_cursor];
+    }    
   }
-
+  
   String get unexpected {
     if (_failurePos < 0 || _failurePos >= _inputLen) {
-      return '';
+      return '';    
     }
-    return _text[_failurePos];
+    return new String.fromCharCode(_runes[_failurePos]);  
   }
-
+  
   TemplateBlock _template;
-
+  
   List<_TemplateLine> parse(TemplateBlock template) {
     _template = template;
     var result = parse_template();
@@ -1056,7 +1231,7 @@ class TemplateBlockParser {
     }
     return result;
   }
-
+  
   _TemplateMultiLine _addMultiLine(List prefix, String key, List suffix) {
     var line = new _TemplateMultiLine(_template);
     line._prefix = prefix.join();
@@ -1064,7 +1239,7 @@ class TemplateBlockParser {
     line._value = _template._addKey('#$key');
     return line;
   }
-
+  
   _TemplateSingleLine _addSingleLine(List parts) {
     var line = new _TemplateSingleLine(_template);
     line._parts = parts;
