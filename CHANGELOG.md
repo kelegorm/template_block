@@ -1,3 +1,7 @@
+## 0.1.6
+
+- Fixed bug template parser
+
 ## 0.1.5
 
 - Generated the new parser with using the new version of `peg` parser generator.

@@ -41,54 +41,54 @@ class TemplateBlockParser {
   String _token;
   int _tokenLevel;
   int _tokenStart;
-  
+
   TemplateBlockParser(String text) {
     if (text == null) {
       throw new ArgumentError('text: $text');
-    }    
+    }
     _runes = _toRunes(text);
     _inputLen = _runes.length;
     if (_inputLen >= 0x3fffffe8 / 32) {
       throw new StateError('File size to big: $_inputLen');
-    }  
-    reset(0);    
+    }
+    reset(0);
   }
-  
-  int get column { 
-    if (_column == -1) { 
-      _calculatePos(_failurePos); 
-    } 
-    return _column;       
-  } 
-   
-  int get line { 
-    if (_line == -1) { 
-      _calculatePos(_failurePos); 
-    } 
-    return _line;       
-  } 
-   
+
+  int get column {
+    if (_column == -1) {
+      _calculatePos(_failurePos);
+    }
+    return _column;
+  }
+
+  int get line {
+    if (_line == -1) {
+      _calculatePos(_failurePos);
+    }
+    return _line;
+  }
+
   dynamic _parse_EMPTY_LINE() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "EMPTY_LINE";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "EMPTY_LINE";
+      _tokenStart = _cursor;
+    }
     var ch0 = _ch, pos0 = _cursor, testing0 = _testing;
     _testing = _inputLen + 1;
     $$ = null;
     success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-    if (success) $$ = _parse_NEW_LINE();    
-    if (!success) {    
+    if (success) $$ = _parse_NEW_LINE();
+    if (!success) {
       if (_cursor > _testing) _failure(_expect0);
     }
     _ch = ch0;
-    _cursor = pos0; 
+    _cursor = pos0;
     _testing = testing0;
     $$ = null;
-    if (success) {    
+    if (success) {
       final $1 = $$;
-      $$ = _addSingleLine(const [""]);    
+      $$ = _addSingleLine(const [""]);
     }
     if (!success && _cursor > _testing) {
       _failure(_expect1);
@@ -99,18 +99,18 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_EOF() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "EOF";  
-      _tokenStart = _cursor;  
-    }  
-    var ch0 = _ch, pos0 = _cursor, testing0 = _testing; 
+    if (_tokenLevel++ == 0) {
+      _token = "EOF";
+      _tokenStart = _cursor;
+    }
+    var ch0 = _ch, pos0 = _cursor, testing0 = _testing;
     _testing = _inputLen + 1;
     $$ = _matchAny();
     _ch = ch0;
-    _cursor = pos0; 
+    _cursor = pos0;
     _testing = testing0;
     $$ = null;
     success = !success;
@@ -123,50 +123,50 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_IDENT() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "IDENT";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "IDENT";
+      _tokenStart = _cursor;
+    }
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
+    while (true) {
       $$ = null;
       success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
-      if (success) $$ = _parse_IDENT_START();    
-      if (!success) {    
+      if (success) $$ = _parse_IDENT_START();
+      if (!success) {
         if (_cursor > _testing) _failure(_expect3);
-        break;  
+        break;
       }
       var seq = new List(2)..[0] = $$;
-      var testing0 = _testing; 
+      var testing0 = _testing;
       for (var reps = []; ; ) {
         _testing = _cursor;
         $$ = null;
         success = _ch >= 48 && _ch <= 122 && _lookahead[_ch + -48];
-        if (success) $$ = _parse_IDENT_CONT();    
-        if (!success) {    
+        if (success) $$ = _parse_IDENT_CONT();
+        if (!success) {
           if (_cursor > _testing) _failure(_expect4);
         }
-        if (success) {  
+        if (success) {
           reps.add($$);
         } else {
           success = true;
           _testing = testing0;
           $$ = reps;
-          break; 
+          break;
         }
       }
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
-        $$ = _flatten([$1, $2]).join();    
+        $$ = _flatten([$1, $2]).join();
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -181,13 +181,13 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_IDENT_CONT() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "IDENT_CONT";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "IDENT_CONT";
+      _tokenStart = _cursor;
+    }
     while (true) {
       $$ = _matchMapping(48, 122, _mapping0);
       if (success) break;
@@ -203,13 +203,13 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_IDENT_START() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "IDENT_START";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "IDENT_START";
+      _tokenStart = _cursor;
+    }
     while (true) {
       $$ = _matchMapping(65, 122, _mapping1);
       if (success) break;
@@ -225,39 +225,39 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_LAST_LINE() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "LAST_LINE";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "LAST_LINE";
+      _tokenStart = _cursor;
+    }
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
+    while (true) {
       $$ = null;
       success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-      if (success) $$ = _parse_NEW_LINE();    
-      if (!success) {    
+      if (success) $$ = _parse_NEW_LINE();
+      if (!success) {
         if (_cursor > _testing) _failure(_expect0);
-        break;  
+        break;
       }
       var seq = new List(2)..[0] = $$;
       var ch1 = _ch, pos1 = _cursor, testing0 = _testing;
       _testing = _inputLen + 1;
       $$ = _parse_EOF();
       _ch = ch1;
-      _cursor = pos1; 
+      _cursor = pos1;
       _testing = testing0;
       $$ = null;
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
-        $$ = _addSingleLine(const [""]);    
+        $$ = _addSingleLine(const [""]);
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -272,37 +272,37 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_MULTI_LINE_KEY() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "{{#";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "{{#";
+      _tokenStart = _cursor;
+    }
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
+    while (true) {
       $$ = _matchString(_strings0, '{{#');
       if (!success) break;
       var seq = new List(3)..[0] = $$;
       $$ = null;
       success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
-      if (success) $$ = _parse_IDENT();    
-      if (!success) {    
+      if (success) $$ = _parse_IDENT();
+      if (!success) {
         if (_cursor > _testing) _failure(_expect5);
-        break;  
+        break;
       }
       seq[1] = $$;
       $$ = _matchString(_strings1, '}}');
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
         final $3 = seq[2];
-        $$ = $2;    
+        $$ = $2;
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -317,13 +317,13 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_NEW_LINE() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "NEW_LINE";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "NEW_LINE";
+      _tokenStart = _cursor;
+    }
     while (true) {
       $$ = _matchChar(10, '\n');
       if (success) break;
@@ -341,37 +341,37 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_SINGLE_LINE_KEY() {
     var $$;
-    if (_tokenLevel++ == 0) {  
-      _token = "{{";  
-      _tokenStart = _cursor;  
-    }  
+    if (_tokenLevel++ == 0) {
+      _token = "{{";
+      _tokenStart = _cursor;
+    }
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
+    while (true) {
       $$ = _matchString(_strings3, '{{');
       if (!success) break;
       var seq = new List(3)..[0] = $$;
       $$ = null;
       success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
-      if (success) $$ = _parse_IDENT();    
-      if (!success) {    
+      if (success) $$ = _parse_IDENT();
+      if (!success) {
         if (_cursor > _testing) _failure(_expect5);
-        break;  
+        break;
       }
       seq[1] = $$;
       $$ = _matchString(_strings1, '}}');
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
         final $3 = seq[2];
-        $$ = _template._addKey($2);    
+        $$ = _template._addKey($2);
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -386,57 +386,57 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_multiLine() {
     var $$;
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
-      var testing0 = _testing; 
+    while (true) {
+      var testing0 = _testing;
       for (var reps = []; ; ) {
         _testing = _cursor;
         $$ = _parse_multiLinePrefix();
-        if (success) {  
+        if (success) {
           reps.add($$);
         } else {
           success = true;
           _testing = testing0;
           $$ = reps;
-          break; 
+          break;
         }
       }
       if (!success) break;
       var seq = new List(3)..[0] = $$;
       $$ = null;
-      success = _ch == 123; 
+      success = _ch == 123;
       if (success) $$ = _parse_MULTI_LINE_KEY();
       if (!success) {
-        if (_cursor > _testing) _failure(_expect7);  
-        break;  
+        if (_cursor > _testing) _failure(_expect7);
+        break;
       }
       seq[1] = $$;
-      var testing1 = _testing; 
+      var testing1 = _testing;
       for (var reps = []; ; ) {
         _testing = _cursor;
         $$ = _parse_multiLineSuffix();
-        if (success) {  
+        if (success) {
           reps.add($$);
         } else {
           success = true;
           _testing = testing1;
           $$ = reps;
-          break; 
+          break;
         }
       }
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
         final $3 = seq[2];
-        $$ = _addMultiLine($1, $2, $3);    
+        $$ = _addMultiLine($1, $2, $3);
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -447,36 +447,36 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_multiLinePrefix() {
     var $$;
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
-      var ch1 = _ch, pos1 = _cursor, testing0 = _testing; 
+    while (true) {
+      var ch1 = _ch, pos1 = _cursor, testing0 = _testing;
       _testing = _inputLen + 1;
       $$ = null;
-      success = _ch == 123; 
+      success = _ch == 123;
       if (success) $$ = _parse_MULTI_LINE_KEY();
       if (!success) {
-        if (_cursor > _testing) _failure(_expect7);  
+        if (_cursor > _testing) _failure(_expect7);
       }
       _ch = ch1;
-      _cursor = pos1; 
+      _cursor = pos1;
       _testing = testing0;
       $$ = null;
       success = !success;
       if (!success) break;
       var seq = new List(3)..[0] = $$;
-      var ch2 = _ch, pos2 = _cursor, testing1 = _testing; 
+      var ch2 = _ch, pos2 = _cursor, testing1 = _testing;
       _testing = _inputLen + 1;
       $$ = null;
       success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-      if (success) $$ = _parse_NEW_LINE();    
-      if (!success) {    
+      if (success) $$ = _parse_NEW_LINE();
+      if (!success) {
         if (_cursor > _testing) _failure(_expect0);
       }
       _ch = ch2;
-      _cursor = pos2; 
+      _cursor = pos2;
       _testing = testing1;
       $$ = null;
       success = !success;
@@ -486,13 +486,13 @@ class TemplateBlockParser {
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
         final $3 = seq[2];
-        $$ = $3;    
+        $$ = $3;
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -503,21 +503,21 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_multiLineSuffix() {
     var $$;
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
-      var ch1 = _ch, pos1 = _cursor, testing0 = _testing; 
+    while (true) {
+      var ch1 = _ch, pos1 = _cursor, testing0 = _testing;
       _testing = _inputLen + 1;
       $$ = null;
       success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-      if (success) $$ = _parse_NEW_LINE();    
-      if (!success) {    
+      if (success) $$ = _parse_NEW_LINE();
+      if (!success) {
         if (_cursor > _testing) _failure(_expect0);
       }
       _ch = ch1;
-      _cursor = pos1; 
+      _cursor = pos1;
       _testing = testing0;
       $$ = null;
       success = !success;
@@ -527,12 +527,12 @@ class TemplateBlockParser {
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
-        $$ = $2;    
+        $$ = $2;
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -543,49 +543,49 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_singleLine() {
     var $$;
     $$ = _parse_singleLineParts();
-    if (success) {    
+    if (success) {
       final $1 = $$;
-      $$ = _addSingleLine($1);    
+      $$ = _addSingleLine($1);
     }
     if (!success && _cursor > _testing) {
       _failure(_expect10);
     }
     return $$;
   }
-  
+
   dynamic _parse_singleLinePart() {
     var $$;
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
-      var ch1 = _ch, pos1 = _cursor, testing0 = _testing; 
+    while (true) {
+      var ch1 = _ch, pos1 = _cursor, testing0 = _testing;
       _testing = _inputLen + 1;
       $$ = null;
-      success = _ch == 123; 
+      success = _ch == 123;
       if (success) $$ = _parse_SINGLE_LINE_KEY();
       if (!success) {
-        if (_cursor > _testing) _failure(_expect8);  
+        if (_cursor > _testing) _failure(_expect8);
       }
       _ch = ch1;
-      _cursor = pos1; 
+      _cursor = pos1;
       _testing = testing0;
       $$ = null;
       success = !success;
       if (!success) break;
       var seq = new List(3)..[0] = $$;
-      var ch2 = _ch, pos2 = _cursor, testing1 = _testing; 
+      var ch2 = _ch, pos2 = _cursor, testing1 = _testing;
       _testing = _inputLen + 1;
       $$ = null;
       success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-      if (success) $$ = _parse_NEW_LINE();    
-      if (!success) {    
+      if (success) $$ = _parse_NEW_LINE();
+      if (!success) {
         if (_cursor > _testing) _failure(_expect0);
       }
       _ch = ch2;
-      _cursor = pos2; 
+      _cursor = pos2;
       _testing = testing1;
       $$ = null;
       success = !success;
@@ -595,13 +595,13 @@ class TemplateBlockParser {
       if (!success) break;
       seq[2] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
         final $3 = seq[2];
-        $$ = $3;    
+        $$ = $3;
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -612,63 +612,63 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
+
   dynamic _parse_singleLineParts() {
     var $$;
     var testing0;
-    for (var first = true, reps; ;) {  
-      while (true) {  
-        $$ = null;  
-        success = _ch == 123;   
-        if (success) $$ = _parse_SINGLE_LINE_KEY();  
-        if (!success) {  
-          if (_cursor > _testing) _failure(_expect8);    
-        }  
-        if (success) break;  
-        $$ = _parse_singleLinePart();  
-        break;  
-      }  
-      if (!success && _cursor > _testing) {  
-        _failure(_expect10);  
-      }  
+    for (var first = true, reps; ;) {
+      while (true) {
+        $$ = null;
+        success = _ch == 123;
+        if (success) $$ = _parse_SINGLE_LINE_KEY();
+        if (!success) {
+          if (_cursor > _testing) _failure(_expect8);
+        }
+        if (success) break;
+        $$ = _parse_singleLinePart();
+        break;
+      }
+      if (!success && _cursor > _testing) {
+        _failure(_expect10);
+      }
       if (success) {
-       if (first) {      
+       if (first) {
           first = false;
           reps = [$$];
-          testing0 = _testing;                  
+          testing0 = _testing;
         } else {
           reps.add($$);
         }
-        _testing = _cursor;   
+        _testing = _cursor;
       } else {
         success = !first;
-        if (success) {      
+        if (success) {
           _testing = testing0;
-          $$ = reps;      
+          $$ = reps;
         } else $$ = null;
         break;
-      }  
+      }
     }
     if (!success && _cursor > _testing) {
       _failure(_expect10);
     }
     return $$;
   }
-  
+
   dynamic parse_template() {
     var $$;
     var ch0 = _ch, pos0 = _cursor;
-    while (true) {  
-      var testing0 = _testing; 
+    while (true) {
+      var testing0 = _testing;
       for (var reps = []; ; ) {
         _testing = _cursor;
         var ch1 = _ch, pos1 = _cursor;
-        while (true) {  
+        while (true) {
           while (true) {
             $$ = null;
             success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-            if (success) $$ = _parse_LAST_LINE();    
-            if (!success) {    
+            if (success) $$ = _parse_LAST_LINE();
+            if (!success) {
               if (_cursor > _testing) _failure(_expect6);
             }
             if (success) break;
@@ -678,8 +678,8 @@ class TemplateBlockParser {
             if (success) break;
             $$ = null;
             success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-            if (success) $$ = _parse_EMPTY_LINE();    
-            if (!success) {    
+            if (success) $$ = _parse_EMPTY_LINE();
+            if (!success) {
               if (_cursor > _testing) _failure(_expect1);
             }
             break;
@@ -692,27 +692,27 @@ class TemplateBlockParser {
           var testing1 = _testing;
           _testing = _cursor;
           var ch2 = _ch, pos2 = _cursor;
-          while (true) {  
+          while (true) {
             $$ = null;
             success = _ch >= 10 && _ch <= 13 && _lookahead[_ch + 65];
-            if (success) $$ = _parse_NEW_LINE();    
-            if (!success) {    
+            if (success) $$ = _parse_NEW_LINE();
+            if (!success) {
               if (_cursor > _testing) _failure(_expect0);
-              break;  
+              break;
             }
             var seq = new List(2)..[0] = $$;
-            var ch3 = _ch, pos3 = _cursor, testing2 = _testing; 
+            var ch3 = _ch, pos3 = _cursor, testing2 = _testing;
             _testing = _inputLen + 1;
             $$ = _parse_EOF();
             _ch = ch3;
-            _cursor = pos3; 
+            _cursor = pos3;
             _testing = testing2;
             $$ = null;
             success = !success;
             if (!success) break;
             seq[1] = $$;
             $$ = seq;
-            break;  
+            break;
           }
           if (!success) {
             _ch = ch2;
@@ -721,17 +721,17 @@ class TemplateBlockParser {
           if (!success && _cursor > _testing) {
             _failure(_expect0);
           }
-          success = true; 
+          success = true;
           _testing = testing1;
           if (!success) break;
           seq[1] = $$;
           $$ = seq;
-          if (success) {    
+          if (success) {
             final $1 = seq[0];
             final $2 = seq[1];
-            $$ = $1;    
+            $$ = $1;
           }
-          break;  
+          break;
         }
         if (!success) {
           _ch = ch1;
@@ -740,13 +740,13 @@ class TemplateBlockParser {
         if (!success && _cursor > _testing) {
           _failure(_expect11);
         }
-        if (success) {  
+        if (success) {
           reps.add($$);
         } else {
           success = true;
           _testing = testing0;
           $$ = reps;
-          break; 
+          break;
         }
       }
       if (!success) break;
@@ -755,12 +755,12 @@ class TemplateBlockParser {
       if (!success) break;
       seq[1] = $$;
       $$ = seq;
-      if (success) {    
+      if (success) {
         final $1 = seq[0];
         final $2 = seq[1];
-        $$ = $1;    
+        $$ = $1;
       }
-      break;  
+      break;
     }
     if (!success) {
       _ch = ch0;
@@ -771,32 +771,32 @@ class TemplateBlockParser {
     }
     return $$;
   }
-  
-  void _addToCache(dynamic result, int start, int id) {  
+
+  void _addToCache(dynamic result, int start, int id) {
     var cached = _cache[start];
     if (cached == null) {
       _cacheRule[start] = id;
       _cache[start] = [result, _cursor, success];
-    } else {    
+    } else {
       var slot = start >> 5;
-      var r1 = (slot << 5) & 0x3fffffff;    
-      var mask = 1 << (start - r1);    
+      var r1 = (slot << 5) & 0x3fffffff;
+      var mask = 1 << (start - r1);
       if ((_cacheState[slot] & mask) == 0) {
-        _cacheState[slot] |= mask;   
+        _cacheState[slot] |= mask;
         cached = [new List.filled(2, 0), new Map<int, List>()];
-        _cache[start] = cached;                                      
+        _cache[start] = cached;
       }
       slot = id >> 5;
-      r1 = (slot << 5) & 0x3fffffff;    
-      mask = 1 << (id - r1);    
+      r1 = (slot << 5) & 0x3fffffff;
+      mask = 1 << (id - r1);
       cached[0][slot] |= mask;
-      cached[1][id] = [result, _cursor, success];      
+      cached[1][id] = [result, _cursor, success];
     }
     if (_cachePos < start) {
       _cachePos = start;
-    }    
+    }
   }
-  
+
   void _calculatePos(int pos) {
     if (pos == null || pos < 0 || pos > _inputLen) {
       return;
@@ -819,8 +819,8 @@ class TemplateBlockParser {
       }
     }
   }
-  
-  Iterable _compact(Iterable iterable) {  
+
+  Iterable _compact(Iterable iterable) {
     if (iterable is List) {
       var hasNull = false;
       var length = iterable.length;
@@ -841,21 +841,21 @@ class TemplateBlockParser {
         }
       }
       return result;
-    }   
+    }
     var result = [];
-    for (var element in iterable) {   
+    for (var element in iterable) {
       if (element != null) {
         result.add(element);
       }
     }
-    return result;  
+    return result;
   }
-  
-  void _failure([List<String> expected]) {  
+
+  void _failure([List<String> expected]) {
     if (_failurePos > _cursor) {
       return;
     }
-    if (_cursor > _failurePos) {    
+    if (_cursor > _failurePos) {
       _expected = [];
      _failurePos = _cursor;
     }
@@ -865,9 +865,9 @@ class TemplateBlockParser {
       _expected.add(null);
     } else {
       _expected.addAll(expected);
-    }   
+    }
   }
-  
+
   List _flatten(dynamic value) {
     if (value is List) {
       var result = [];
@@ -893,120 +893,120 @@ class TemplateBlockParser {
     }
     return [value];
   }
-  
-  dynamic _getFromCache(int id) {  
+
+  dynamic _getFromCache(int id) {
     var result = _cache[_cursor];
     if (result == null) {
       return null;
-    }    
+    }
     var slot = _cursor >> 5;
-    var r1 = (slot << 5) & 0x3fffffff;  
+    var r1 = (slot << 5) & 0x3fffffff;
     var mask = 1 << (_cursor - r1);
     if ((_cacheState[slot] & mask) == 0) {
-      if (_cacheRule[_cursor] == id) {      
+      if (_cacheRule[_cursor] == id) {
         _cursor = result[1];
-        success = result[2];      
+        success = result[2];
         if (_cursor < _inputLen) {
           _ch = _runes[_cursor];
         } else {
           _ch = EOF;
-        }      
+        }
         return result;
       } else {
         return null;
-      }    
+      }
     }
     slot = id >> 5;
-    r1 = (slot << 5) & 0x3fffffff;  
+    r1 = (slot << 5) & 0x3fffffff;
     mask = 1 << (id - r1);
     if ((result[0][slot] & mask) == 0) {
       return null;
     }
-    var data = result[1][id];  
+    var data = result[1][id];
     _cursor = data[1];
     success = data[2];
     if (_cursor < _inputLen) {
       _ch = _runes[_cursor];
     } else {
       _ch = EOF;
-    }   
-    return data;  
+    }
+    return data;
   }
-  
+
   String _matchAny() {
     success = _cursor < _inputLen;
     if (success) {
       String result;
       if (_ch < 128) {
-        result = _ascii[_ch];  
+        result = _ascii[_ch];
       } else {
         result = new String.fromCharCode(_ch);
-      }    
+      }
       if (++_cursor < _inputLen) {
         _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }    
+      }
       return result;
-    }    
-    return null;  
+    }
+    return null;
   }
-  
+
   String _matchChar(int ch, String string) {
     success = _ch == ch;
     if (success) {
-      var result = string;  
+      var result = string;
       if (++_cursor < _inputLen) {
         _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }    
+      }
       return result;
-    }  
-    return null;  
+    }
+    return null;
   }
-  
+
   String _matchMapping(int start, int end, List<bool> mapping) {
     success = _ch >= start && _ch <= end;
-    if (success) {    
+    if (success) {
       if(mapping[_ch - start]) {
         String result;
         if (_ch < 128) {
-          result = _ascii[_ch];  
+          result = _ascii[_ch];
         } else {
           result = new String.fromCharCode(_ch);
-        }     
+        }
         if (++_cursor < _inputLen) {
           _ch = _runes[_cursor];
         } else {
           _ch = EOF;
-        }      
+        }
         return result;
       }
       success = false;
-    }  
-    return null;  
+    }
+    return null;
   }
-  
+
   String _matchRange(int start, int end) {
     success = _ch >= start && _ch <= end;
     if (success) {
       String result;
       if (_ch < 128) {
-        result = _ascii[_ch];  
+        result = _ascii[_ch];
       } else {
         result = new String.fromCharCode(_ch);
-      }        
+      }
       if (++_cursor < _inputLen) {
         _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }  
+      }
       return result;
-    }  
-    return null;  
+    }
+    return null;
   }
-  
+
   String _matchRanges(List<int> ranges) {
     var length = ranges.length;
     for (var i = 0; i < length; i += 2) {
@@ -1014,28 +1014,28 @@ class TemplateBlockParser {
         if (_ch >= ranges[i]) {
           String result;
           if (_ch < 128) {
-            result = _ascii[_ch];  
+            result = _ascii[_ch];
           } else {
             result = new String.fromCharCode(_ch);
-          }          
+          }
           if (++_cursor < _inputLen) {
             _ch = _runes[_cursor];
           } else {
              _ch = EOF;
           }
-          success = true;    
+          success = true;
           return result;
-        }      
-      } else break;  
+        }
+      } else break;
     }
-    success = false;  
-    return null;  
+    success = false;
+    return null;
   }
-  
+
   String _matchString(List<int> runes, String string) {
-    var length = runes.length;  
-    success = true;  
-    if (_cursor + length < _inputLen) {
+    var length = runes.length;
+    success = true;
+    if (_cursor + length <= _inputLen) {
       for (var i = 0; i < length; i++) {
         if (runes[i] != _runes[_cursor + i]) {
           success = false;
@@ -1044,41 +1044,41 @@ class TemplateBlockParser {
       }
     } else {
       success = false;
-    }  
+    }
     if (success) {
-      _cursor += length;      
+      _cursor += length;
       if (_cursor < _inputLen) {
         _ch = _runes[_cursor];
       } else {
         _ch = EOF;
-      }    
-      return string;      
-    }  
-    return null; 
+      }
+      return string;
+    }
+    return null;
   }
-  
-  void _nextChar([int count = 1]) {  
+
+  void _nextChar([int count = 1]) {
     success = true;
-    _cursor += count; 
+    _cursor += count;
     if (_cursor < _inputLen) {
       _ch = _runes[_cursor];
     } else {
       _ch = EOF;
-    }    
+    }
   }
-  
+
   bool _testChar(int c, int flag) {
     if (c < 0 || c > 127) {
       return false;
-    }    
-    int slot = (c & 0xff) >> 6;  
-    int mask = 1 << c - ((slot << 6) & 0x3fffffff);  
-    if ((flag & mask) != 0) {    
+    }
+    int slot = (c & 0xff) >> 6;
+    int mask = 1 << c - ((slot << 6) & 0x3fffffff);
+    if ((flag & mask) != 0) {
       return true;
     }
-    return false;           
+    return false;
   }
-  
+
   bool _testInput(int flag) {
     if (_cursor >= _inputLen) {
       return false;
@@ -1086,50 +1086,50 @@ class TemplateBlockParser {
     var c = _runes[_cursor];
     if (c < 0 || c > 127) {
       return false;
-    }    
-    int slot = (c & 0xff) >> 6;  
-    int mask = 1 << c - ((slot << 6) & 0x3fffffff);  
-    if ((flag & mask) != 0) {    
+    }
+    int slot = (c & 0xff) >> 6;
+    int mask = 1 << c - ((slot << 6) & 0x3fffffff);
+    if ((flag & mask) != 0) {
       return true;
     }
-    return false;           
+    return false;
   }
-  
+
   int _toRune(String string) {
     if (string == null) {
       throw new ArgumentError("string: $string");
     }
-  
+
     var length = string.length;
     if (length == 0) {
       throw new StateError("An empty string contains no elements.");
     }
-  
+
     var start = string.codeUnitAt(0);
     if (length == 1) {
       return start;
     }
-  
+
     if ((start & 0xFC00) == 0xD800) {
       var end = string.codeUnitAt(1);
       if ((end & 0xFC00) == 0xDC00) {
         return (0x10000 + ((start & 0x3FF) << 10) + (end & 0x3FF));
       }
     }
-  
+
     return start;
   }
-  
+
   List<int> _toRunes(String string) {
     if (string == null) {
       throw new ArgumentError("string: $string");
     }
-  
+
     var length = string.length;
     if (length == 0) {
       return const <int>[];
     }
-  
+
     var runes = <int>[];
     runes.length = length;
     var i = 0;
@@ -1149,11 +1149,11 @@ class TemplateBlockParser {
         runes[pos] = start;
       }
     }
-  
+
     runes.length = pos;
     return runes;
   }
-  
+
   static List<bool> _unmap(List<int> mapping) {
     var length = mapping.length;
     var result = new List<bool>(length * 31);
@@ -1166,54 +1166,54 @@ class TemplateBlockParser {
     }
     return result;
   }
-  
+
   List<String> get expected {
-    var set = new Set<String>();  
+    var set = new Set<String>();
     set.addAll(_expected);
     if (set.contains(null)) {
       set.clear();
-    }  
+    }
     var result = set.toList();
-    result.sort(); 
-    return result;        
+    result.sort();
+    return result;
   }
-  
+
   void reset(int pos) {
     if (pos == null) {
       throw new ArgumentError('pos: $pos');
     }
     if (pos < 0 || pos > _inputLen) {
       throw new RangeError('pos');
-    }      
+    }
     _cursor = pos;
     _cache = new List(_inputLen + 1);
     _cachePos = -1;
     _cacheRule = new List(_inputLen + 1);
     _cacheState = new List.filled(((_inputLen + 1) >> 5) + 1, 0);
-    _ch = EOF;  
-    _column = -1; 
+    _ch = EOF;
+    _column = -1;
     _expected = [];
-    _failurePos = -1;    
+    _failurePos = -1;
     _line = -1;
-    success = true;      
+    success = true;
     _testing = -1;
     _token = null;
     _tokenLevel = 0;
     _tokenStart = null;
     if (_cursor < _inputLen) {
       _ch = _runes[_cursor];
-    }    
+    }
   }
-  
+
   String get unexpected {
     if (_failurePos < 0 || _failurePos >= _inputLen) {
-      return '';    
+      return '';
     }
-    return new String.fromCharCode(_runes[_failurePos]);  
+    return new String.fromCharCode(_runes[_failurePos]);
   }
-  
+
   TemplateBlock _template;
-  
+
   List<_TemplateLine> parse(TemplateBlock template) {
     _template = template;
     var result = parse_template();
@@ -1231,7 +1231,7 @@ class TemplateBlockParser {
     }
     return result;
   }
-  
+
   _TemplateMultiLine _addMultiLine(List prefix, String key, List suffix) {
     var line = new _TemplateMultiLine(_template);
     line._prefix = prefix.join();
@@ -1239,7 +1239,7 @@ class TemplateBlockParser {
     line._value = _template._addKey('#$key');
     return line;
   }
-  
+
   _TemplateSingleLine _addSingleLine(List parts) {
     var line = new _TemplateSingleLine(_template);
     line._parts = parts;
