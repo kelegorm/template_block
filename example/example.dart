@@ -1,28 +1,27 @@
 import "package:template_block/template_block.dart";
 
 void main() {
-  var statement = new TemplateBlock(_templateStatement);
+  var statement = TemplateBlock(_templateStatement);
   statement.assign("MIN", 0);
   statement.assign("MAX", 128);
-  var methodFoo = new TemplateBlock(_templateMethodFoo);
+  var methodFoo = TemplateBlock(_templateMethodFoo);
   methodFoo.assign("#STATEMENTS", statement.process());
   statement = statement.clone();
   statement.assign("MIN", 512);
   statement.assign("MAX", 1024);
   methodFoo.assign("#STATEMENTS", statement.process());
-  var methodBaz = new TemplateBlock(_templateMethodBaz);
-  var clazz = new TemplateBlock(_templateClass);
+  var methodBaz = TemplateBlock(_templateMethodBaz);
+  var clazz = TemplateBlock(_templateClass);
   clazz.assign("NAME", "MyClass");
   clazz.assign("#METHODS", methodBaz.process());
   clazz.assign("#METHODS", methodFoo.process());
-  var library = new TemplateBlock(_templateLibraryPart);
+  var library = TemplateBlock(_templateLibraryPart);
   library.assign("NAME", "my_lib");
   library.assign("#CLASSES", clazz.process());
   print(library.process().join("\n"));
 }
 
-final String _templateLibraryPart =
-    '''
+final String _templateLibraryPart = '''
 part of {{NAME}};
 
 {{#CONSTANTS}}
@@ -30,8 +29,7 @@ part of {{NAME}};
 {{#CLASSES}}
 ''';
 
-final String _templateClass =
-    '''
+final String _templateClass = '''
 class {{NAME}} {
   {{#CONSTANTS}}
   {{#VARIABLES}}
@@ -39,8 +37,7 @@ class {{NAME}} {
 }
 ''';
 
-final String _templateMethodFoo =
-    '''
+final String _templateMethodFoo = '''
 int foo(int start, int end) {
   $BAZ_NAME();
   {{#STATEMENTS}}
@@ -54,7 +51,6 @@ void $BAZ_NAME() {
 }
 ''';
 
-final String _templateStatement =
-    '''
+final String _templateStatement = '''
 for (var i = {{MIN}}; i < {{MAX}}; i++) {
 }''';

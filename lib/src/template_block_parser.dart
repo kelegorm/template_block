@@ -2,10 +2,13 @@
 // Processing tool available at https://github.com/mezoni/peg
 
 part of template_block;
+
 class TemplateBlockParser {
   static const int EOF = -1;
-  static final List<String> _ascii = new List<String>.generate(128, (c) => new String.fromCharCode(c));
-  static final List<bool> _lookahead = _unmap([0x7ffe03ff, 0x7ffd0fff, 0x13fff]);
+  static final List<String> _ascii =
+      List<String>.generate(128, (c) => String.fromCharCode(c));
+  static final List<bool> _lookahead =
+      _unmap([0x7ffe03ff, 0x7ffd0fff, 0x13fff]);
   static final List<bool> _mapping0 = _unmap([0x7ffe03ff, 0x7ffc0fff, 0x1fff]);
   static final List<bool> _mapping1 = _unmap([0x3ffffff, 0x7fffffe]);
   static final List<int> _strings0 = <int>[123, 123, 35];
@@ -23,7 +26,13 @@ class TemplateBlockParser {
   static final List<String> _expect8 = <String>["{{"];
   static final List<String> _expect9 = <String>[null];
   static final List<String> _expect10 = <String>[null, "{{"];
-  static final List<String> _expect11 = <String>[null, "EMPTY_LINE", "LAST_LINE", "{{", "{{#"];
+  static final List<String> _expect11 = <String>[
+    null,
+    "EMPTY_LINE",
+    "LAST_LINE",
+    "{{",
+    "{{#"
+  ];
   List _cache;
   int _cachePos;
   List<int> _cacheRule;
@@ -44,12 +53,12 @@ class TemplateBlockParser {
 
   TemplateBlockParser(String text) {
     if (text == null) {
-      throw new ArgumentError('text: $text');
+      throw ArgumentError('text: $text');
     }
     _runes = _toRunes(text);
     _inputLen = _runes.length;
     if (_inputLen >= 0x3fffffe8 / 32) {
-      throw new StateError('File size to big: $_inputLen');
+      throw StateError('File size to big: $_inputLen');
     }
     reset(0);
   }
@@ -139,9 +148,9 @@ class TemplateBlockParser {
         if (_cursor > _testing) _failure(_expect3);
         break;
       }
-      var seq = new List(2)..[0] = $$;
+      var seq = List(2)..[0] = $$;
       var testing0 = _testing;
-      for (var reps = []; ; ) {
+      for (var reps = [];;) {
         _testing = _cursor;
         $$ = null;
         success = _ch >= 48 && _ch <= 122 && _lookahead[_ch + -48];
@@ -241,7 +250,7 @@ class TemplateBlockParser {
         if (_cursor > _testing) _failure(_expect0);
         break;
       }
-      var seq = new List(2)..[0] = $$;
+      var seq = List(2)..[0] = $$;
       var ch1 = _ch, pos1 = _cursor, testing0 = _testing;
       _testing = _inputLen + 1;
       $$ = _parse_EOF();
@@ -283,7 +292,7 @@ class TemplateBlockParser {
     while (true) {
       $$ = _matchString(_strings0, '{{#');
       if (!success) break;
-      var seq = new List(3)..[0] = $$;
+      var seq = List(3)..[0] = $$;
       $$ = null;
       success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
       if (success) $$ = _parse_IDENT();
@@ -352,7 +361,7 @@ class TemplateBlockParser {
     while (true) {
       $$ = _matchString(_strings3, '{{');
       if (!success) break;
-      var seq = new List(3)..[0] = $$;
+      var seq = List(3)..[0] = $$;
       $$ = null;
       success = _ch >= 65 && _ch <= 122 && _lookahead[_ch + -48];
       if (success) $$ = _parse_IDENT();
@@ -369,7 +378,7 @@ class TemplateBlockParser {
         final $1 = seq[0];
         final $2 = seq[1];
         final $3 = seq[2];
-        $$ = _template._addKey($2);
+        $$ = _template._addKey($2 as String);
       }
       break;
     }
@@ -392,7 +401,7 @@ class TemplateBlockParser {
     var ch0 = _ch, pos0 = _cursor;
     while (true) {
       var testing0 = _testing;
-      for (var reps = []; ; ) {
+      for (var reps = [];;) {
         _testing = _cursor;
         $$ = _parse_multiLinePrefix();
         if (success) {
@@ -405,7 +414,7 @@ class TemplateBlockParser {
         }
       }
       if (!success) break;
-      var seq = new List(3)..[0] = $$;
+      var seq = List(3)..[0] = $$;
       $$ = null;
       success = _ch == 123;
       if (success) $$ = _parse_MULTI_LINE_KEY();
@@ -415,7 +424,7 @@ class TemplateBlockParser {
       }
       seq[1] = $$;
       var testing1 = _testing;
-      for (var reps = []; ; ) {
+      for (var reps = [];;) {
         _testing = _cursor;
         $$ = _parse_multiLineSuffix();
         if (success) {
@@ -434,7 +443,7 @@ class TemplateBlockParser {
         final $1 = seq[0];
         final $2 = seq[1];
         final $3 = seq[2];
-        $$ = _addMultiLine($1, $2, $3);
+        $$ = _addMultiLine($1 as List, $2 as String, $3 as List);
       }
       break;
     }
@@ -466,7 +475,7 @@ class TemplateBlockParser {
       $$ = null;
       success = !success;
       if (!success) break;
-      var seq = new List(3)..[0] = $$;
+      var seq = List(3)..[0] = $$;
       var ch2 = _ch, pos2 = _cursor, testing1 = _testing;
       _testing = _inputLen + 1;
       $$ = null;
@@ -522,7 +531,7 @@ class TemplateBlockParser {
       $$ = null;
       success = !success;
       if (!success) break;
-      var seq = new List(2)..[0] = $$;
+      var seq = List(2)..[0] = $$;
       $$ = _matchAny();
       if (!success) break;
       seq[1] = $$;
@@ -549,7 +558,7 @@ class TemplateBlockParser {
     $$ = _parse_singleLineParts();
     if (success) {
       final $1 = $$;
-      $$ = _addSingleLine($1);
+      $$ = _addSingleLine($1 as List);
     }
     if (!success && _cursor > _testing) {
       _failure(_expect10);
@@ -575,7 +584,7 @@ class TemplateBlockParser {
       $$ = null;
       success = !success;
       if (!success) break;
-      var seq = new List(3)..[0] = $$;
+      var seq = List(3)..[0] = $$;
       var ch2 = _ch, pos2 = _cursor, testing1 = _testing;
       _testing = _inputLen + 1;
       $$ = null;
@@ -615,8 +624,8 @@ class TemplateBlockParser {
 
   dynamic _parse_singleLineParts() {
     var $$;
-    var testing0;
-    for (var first = true, reps; ;) {
+    int testing0;
+    for (var first = true, reps;;) {
       while (true) {
         $$ = null;
         success = _ch == 123;
@@ -632,7 +641,7 @@ class TemplateBlockParser {
         _failure(_expect10);
       }
       if (success) {
-       if (first) {
+        if (first) {
           first = false;
           reps = [$$];
           testing0 = _testing;
@@ -645,7 +654,8 @@ class TemplateBlockParser {
         if (success) {
           _testing = testing0;
           $$ = reps;
-        } else $$ = null;
+        } else
+          $$ = null;
         break;
       }
     }
@@ -660,7 +670,7 @@ class TemplateBlockParser {
     var ch0 = _ch, pos0 = _cursor;
     while (true) {
       var testing0 = _testing;
-      for (var reps = []; ; ) {
+      for (var reps = [];;) {
         _testing = _cursor;
         var ch1 = _ch, pos1 = _cursor;
         while (true) {
@@ -688,7 +698,7 @@ class TemplateBlockParser {
             _failure(_expect11);
           }
           if (!success) break;
-          var seq = new List(2)..[0] = $$;
+          var seq = List(2)..[0] = $$;
           var testing1 = _testing;
           _testing = _cursor;
           var ch2 = _ch, pos2 = _cursor;
@@ -700,7 +710,7 @@ class TemplateBlockParser {
               if (_cursor > _testing) _failure(_expect0);
               break;
             }
-            var seq = new List(2)..[0] = $$;
+            var seq = List(2)..[0] = $$;
             var ch3 = _ch, pos3 = _cursor, testing2 = _testing;
             _testing = _inputLen + 1;
             $$ = _parse_EOF();
@@ -750,7 +760,7 @@ class TemplateBlockParser {
         }
       }
       if (!success) break;
-      var seq = new List(2)..[0] = $$;
+      var seq = List(2)..[0] = $$;
       $$ = _parse_EOF();
       if (!success) break;
       seq[1] = $$;
@@ -770,31 +780,6 @@ class TemplateBlockParser {
       _failure(_expect2);
     }
     return $$;
-  }
-
-  void _addToCache(dynamic result, int start, int id) {
-    var cached = _cache[start];
-    if (cached == null) {
-      _cacheRule[start] = id;
-      _cache[start] = [result, _cursor, success];
-    } else {
-      var slot = start >> 5;
-      var r1 = (slot << 5) & 0x3fffffff;
-      var mask = 1 << (start - r1);
-      if ((_cacheState[slot] & mask) == 0) {
-        _cacheState[slot] |= mask;
-        cached = [new List.filled(2, 0), new Map<int, List>()];
-        _cache[start] = cached;
-      }
-      slot = id >> 5;
-      r1 = (slot << 5) & 0x3fffffff;
-      mask = 1 << (id - r1);
-      cached[0][slot] |= mask;
-      cached[1][id] = [result, _cursor, success];
-    }
-    if (_cachePos < start) {
-      _cachePos = start;
-    }
   }
 
   void _calculatePos(int pos) {
@@ -820,44 +805,13 @@ class TemplateBlockParser {
     }
   }
 
-  Iterable _compact(Iterable iterable) {
-    if (iterable is List) {
-      var hasNull = false;
-      var length = iterable.length;
-      for (var i = 0; i < length; i++) {
-        if (iterable[i] == null) {
-          hasNull = true;
-          break;
-        }
-      }
-      if (!hasNull) {
-        return iterable;
-      }
-      var result = [];
-      for (var i = 0; i < length; i++) {
-        var element = iterable[i];
-        if (element != null) {
-          result.add(element);
-        }
-      }
-      return result;
-    }
-    var result = [];
-    for (var element in iterable) {
-      if (element != null) {
-        result.add(element);
-      }
-    }
-    return result;
-  }
-
   void _failure([List<String> expected]) {
     if (_failurePos > _cursor) {
       return;
     }
     if (_cursor > _failurePos) {
       _expected = [];
-     _failurePos = _cursor;
+      _failurePos = _cursor;
     }
     if (_token != null) {
       _expected.add(_token);
@@ -904,8 +858,8 @@ class TemplateBlockParser {
     var mask = 1 << (_cursor - r1);
     if ((_cacheState[slot] & mask) == 0) {
       if (_cacheRule[_cursor] == id) {
-        _cursor = result[1];
-        success = result[2];
+        _cursor = result[1] as int;
+        success = result[2] as bool;
         if (_cursor < _inputLen) {
           _ch = _runes[_cursor];
         } else {
@@ -923,8 +877,8 @@ class TemplateBlockParser {
       return null;
     }
     var data = result[1][id];
-    _cursor = data[1];
-    success = data[2];
+    _cursor = data[1] as int;
+    success = data[2] as bool;
     if (_cursor < _inputLen) {
       _ch = _runes[_cursor];
     } else {
@@ -940,7 +894,7 @@ class TemplateBlockParser {
       if (_ch < 128) {
         result = _ascii[_ch];
       } else {
-        result = new String.fromCharCode(_ch);
+        result = String.fromCharCode(_ch);
       }
       if (++_cursor < _inputLen) {
         _ch = _runes[_cursor];
@@ -969,12 +923,12 @@ class TemplateBlockParser {
   String _matchMapping(int start, int end, List<bool> mapping) {
     success = _ch >= start && _ch <= end;
     if (success) {
-      if(mapping[_ch - start]) {
+      if (mapping[_ch - start]) {
         String result;
         if (_ch < 128) {
           result = _ascii[_ch];
         } else {
-          result = new String.fromCharCode(_ch);
+          result = String.fromCharCode(_ch);
         }
         if (++_cursor < _inputLen) {
           _ch = _runes[_cursor];
@@ -985,50 +939,6 @@ class TemplateBlockParser {
       }
       success = false;
     }
-    return null;
-  }
-
-  String _matchRange(int start, int end) {
-    success = _ch >= start && _ch <= end;
-    if (success) {
-      String result;
-      if (_ch < 128) {
-        result = _ascii[_ch];
-      } else {
-        result = new String.fromCharCode(_ch);
-      }
-      if (++_cursor < _inputLen) {
-        _ch = _runes[_cursor];
-      } else {
-        _ch = EOF;
-      }
-      return result;
-    }
-    return null;
-  }
-
-  String _matchRanges(List<int> ranges) {
-    var length = ranges.length;
-    for (var i = 0; i < length; i += 2) {
-      if (_ch <= ranges[i + 1]) {
-        if (_ch >= ranges[i]) {
-          String result;
-          if (_ch < 128) {
-            result = _ascii[_ch];
-          } else {
-            result = new String.fromCharCode(_ch);
-          }
-          if (++_cursor < _inputLen) {
-            _ch = _runes[_cursor];
-          } else {
-             _ch = EOF;
-          }
-          success = true;
-          return result;
-        }
-      } else break;
-    }
-    success = false;
     return null;
   }
 
@@ -1067,62 +977,9 @@ class TemplateBlockParser {
     }
   }
 
-  bool _testChar(int c, int flag) {
-    if (c < 0 || c > 127) {
-      return false;
-    }
-    int slot = (c & 0xff) >> 6;
-    int mask = 1 << c - ((slot << 6) & 0x3fffffff);
-    if ((flag & mask) != 0) {
-      return true;
-    }
-    return false;
-  }
-
-  bool _testInput(int flag) {
-    if (_cursor >= _inputLen) {
-      return false;
-    }
-    var c = _runes[_cursor];
-    if (c < 0 || c > 127) {
-      return false;
-    }
-    int slot = (c & 0xff) >> 6;
-    int mask = 1 << c - ((slot << 6) & 0x3fffffff);
-    if ((flag & mask) != 0) {
-      return true;
-    }
-    return false;
-  }
-
-  int _toRune(String string) {
-    if (string == null) {
-      throw new ArgumentError("string: $string");
-    }
-
-    var length = string.length;
-    if (length == 0) {
-      throw new StateError("An empty string contains no elements.");
-    }
-
-    var start = string.codeUnitAt(0);
-    if (length == 1) {
-      return start;
-    }
-
-    if ((start & 0xFC00) == 0xD800) {
-      var end = string.codeUnitAt(1);
-      if ((end & 0xFC00) == 0xDC00) {
-        return (0x10000 + ((start & 0x3FF) << 10) + (end & 0x3FF));
-      }
-    }
-
-    return start;
-  }
-
   List<int> _toRunes(String string) {
     if (string == null) {
-      throw new ArgumentError("string: $string");
+      throw ArgumentError("string: $string");
     }
 
     var length = string.length;
@@ -1134,7 +991,7 @@ class TemplateBlockParser {
     runes.length = length;
     var i = 0;
     var pos = 0;
-    for ( ; i < length; pos++) {
+    for (; i < length; pos++) {
       var start = string.codeUnitAt(i);
       i++;
       if ((start & 0xFC00) == 0xD800 && i < length) {
@@ -1156,7 +1013,7 @@ class TemplateBlockParser {
 
   static List<bool> _unmap(List<int> mapping) {
     var length = mapping.length;
-    var result = new List<bool>(length * 31);
+    var result = List<bool>(length * 31);
     var offset = 0;
     for (var i = 0; i < length; i++) {
       var v = mapping[i];
@@ -1168,7 +1025,7 @@ class TemplateBlockParser {
   }
 
   List<String> get expected {
-    var set = new Set<String>();
+    var set = Set<String>();
     set.addAll(_expected);
     if (set.contains(null)) {
       set.clear();
@@ -1180,16 +1037,16 @@ class TemplateBlockParser {
 
   void reset(int pos) {
     if (pos == null) {
-      throw new ArgumentError('pos: $pos');
+      throw ArgumentError('pos: $pos');
     }
     if (pos < 0 || pos > _inputLen) {
-      throw new RangeError('pos');
+      throw RangeError('pos');
     }
     _cursor = pos;
-    _cache = new List(_inputLen + 1);
+    _cache = List(_inputLen + 1);
     _cachePos = -1;
-    _cacheRule = new List(_inputLen + 1);
-    _cacheState = new List.filled(((_inputLen + 1) >> 5) + 1, 0);
+    _cacheRule = List(_inputLen + 1);
+    _cacheState = List.filled(((_inputLen + 1) >> 5) + 1, 0);
     _ch = EOF;
     _column = -1;
     _expected = [];
@@ -1209,7 +1066,7 @@ class TemplateBlockParser {
     if (_failurePos < 0 || _failurePos >= _inputLen) {
       return '';
     }
-    return new String.fromCharCode(_runes[_failurePos]);
+    return String.fromCharCode(_runes[_failurePos]);
   }
 
   TemplateBlock _template;
@@ -1218,22 +1075,24 @@ class TemplateBlockParser {
     _template = template;
     var result = parse_template();
     if (!success) {
-      if(!expected.isEmpty) {
-        var str = expected.map((s) => toPrintable(s)).join('\', \'');
+      if (expected.isNotEmpty) {
+        //var str = expected.map((s) => toPrintable(s)).join('\', \'');
+        var str = expected.map((s) => s).join('\', \'');
         throw 'Parser error at ($line, $column): expected \'$str\' but found \'$unexpected\'';
       } else {
-        if(!unexpected.isEmpty) {
-          throw 'Parser error at ($line, $column): unexpected "${toPrintable(unexpected)}"';
+        if (unexpected.isNotEmpty) {
+          //throw 'Parser error at ($line, $column): unexpected "${toPrintable(unexpected)}"';
+          throw 'Parser error at ($line, $column): unexpected "${unexpected}"';
         } else {
           throw 'Parser error at ($line, $column): unexpected end of file';
         }
       }
     }
-    return result;
+    return (result as List).cast<_TemplateLine>();
   }
 
   _TemplateMultiLine _addMultiLine(List prefix, String key, List suffix) {
-    var line = new _TemplateMultiLine(_template);
+    var line = _TemplateMultiLine(_template);
     line._prefix = prefix.join();
     line._suffix = suffix.join();
     line._value = _template._addKey('#$key');
@@ -1241,9 +1100,8 @@ class TemplateBlockParser {
   }
 
   _TemplateSingleLine _addSingleLine(List parts) {
-    var line = new _TemplateSingleLine(_template);
+    var line = _TemplateSingleLine(_template);
     line._parts = parts;
     return line;
   }
 }
-

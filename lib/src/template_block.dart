@@ -3,20 +3,19 @@ part of template_block;
 class TemplateBlock {
   Map<String, int> _keys;
   List<_TemplateLine> _lines;
-  List<List> _values;
+  List _values;
 
   TemplateBlock(String template) {
     if (template == null) {
-      throw new ArgumentError('template: $template');
+      throw ArgumentError('template: $template');
     }
 
     _keys = {};
     _lines = [];
     _values = [];
-
     // TODO: remove old parser
     if (false == true) {
-      var parser = new _TemplateLineParser();
+      var parser = _TemplateLineParser();
       var text = template.replaceAll('\r\n', '\n');
       text = text.replaceAll('\r', '\n');
       var strings = text.split('\n');
@@ -25,7 +24,7 @@ class TemplateBlock {
         _lines.add(line);
       }
     } else {
-      var parser = new TemplateBlockParser(template);
+      var parser = TemplateBlockParser(template);
       var lines = parser.parse(this);
       _lines.addAll(lines);
     }
@@ -35,12 +34,12 @@ class TemplateBlock {
 
   void assign(String key, dynamic value) {
     if (key == null) {
-      throw new ArgumentError('key: $key');
+      throw ArgumentError('key: $key');
     }
 
     var index = _keys[key];
     if (index == null) {
-      throw new StateError('Key not found: $key');
+      throw StateError('Key not found: $key');
     }
 
     if (key.startsWith('#')) {
@@ -51,9 +50,9 @@ class TemplateBlock {
   }
 
   TemplateBlock clone() {
-    var cloned = new TemplateBlock._internal();
+    var cloned = TemplateBlock._internal();
     cloned._keys = _keys;
-    cloned._values = new List.generate(_values.length, (i) => []);
+    cloned._values = List.generate(_values.length, (i) => []);
     cloned._lines = [];
     for (var line in _lines) {
       cloned._lines.add(line.clone(cloned));
@@ -63,7 +62,7 @@ class TemplateBlock {
   }
 
   List<String> process() {
-    var strings = [];
+    var strings = <String>[];
     for (var line in _lines) {
       strings.addAll(line.process());
     }
@@ -73,12 +72,12 @@ class TemplateBlock {
 
   void reassign(String key, dynamic value) {
     if (key == null) {
-      throw new ArgumentError('key: $key');
+      throw ArgumentError('key: $key');
     }
 
     var index = _keys[key];
     if (index == null) {
-      throw new StateError('Key not found: $key');
+      throw StateError('Key not found: $key');
     }
 
     _values[index] = [value];
@@ -86,7 +85,7 @@ class TemplateBlock {
 
   int _addKey(String key) {
     if (key == null) {
-      throw new ArgumentError('key: $key');
+      throw ArgumentError('key: $key');
     }
 
     var index = _keys[key];
@@ -111,7 +110,7 @@ abstract class _TemplateLine {
 
   _TemplateLine(this._template) {
     if (_template == null) {
-      throw new ArgumentError('_template: $_template');
+      throw ArgumentError('_template: $_template');
     }
   }
 
@@ -128,7 +127,7 @@ class _TemplateMultiLine extends _TemplateLine {
   _TemplateMultiLine(TemplateBlock template) : super(template);
 
   _TemplateMultiLine clone(TemplateBlock template) {
-    var cloned = new _TemplateMultiLine(template);
+    var cloned = _TemplateMultiLine(template);
     cloned._prefix = _prefix;
     cloned._suffix = _suffix;
     cloned._value = _value;
@@ -137,7 +136,7 @@ class _TemplateMultiLine extends _TemplateLine {
 
   List<String> process() {
     List<String> strings = [];
-    _processList(_template._values[_value], strings);
+    _processList(_template._values[_value] as List, strings);
 
     return strings;
   }
@@ -159,7 +158,7 @@ class _TemplateSingleLine extends _TemplateLine {
   _TemplateSingleLine(TemplateBlock template) : super(template);
 
   _TemplateSingleLine clone(TemplateBlock template) {
-    var cloned = new _TemplateSingleLine(template);
+    var cloned = _TemplateSingleLine(template);
     cloned._parts = _parts.toList();
     return cloned;
   }
@@ -172,10 +171,10 @@ class _TemplateSingleLine extends _TemplateLine {
       if (part is int) {
         var value = _template._values[part];
         if (value != null) {
-          string.add(value);
+          string.add(value.toString());
         }
       } else {
-        string.add(_parts[i]);
+        string.add(_parts[i].toString());
       }
     }
 
@@ -190,7 +189,7 @@ class _TemplateLineParser {
 
   _TemplateLine parse(String text, TemplateBlock template) {
     if (text == null) {
-      throw new ArgumentError('text: $text');
+      throw ArgumentError('text: $text');
     }
 
     this.text = text;
@@ -234,7 +233,7 @@ class _TemplateLineParser {
         suffix.add(c);
       }
 
-      var line = new _TemplateMultiLine(template);
+      var line = _TemplateMultiLine(template);
       line._prefix = prefix.join();
       line._suffix = suffix.join();
       line._value = template._addKey('#$ident');
@@ -277,7 +276,7 @@ class _TemplateLineParser {
       parts.add(part.join());
     }
 
-    var line = new _TemplateSingleLine(template);
+    var line = _TemplateSingleLine(template);
     line._parts = parts;
     return line;
   }
@@ -303,9 +302,8 @@ class _TemplateLineParser {
           }
         }
 
-        if (!result.isEmpty) {
-          result = result.join();
-          return result;
+        if (result.isNotEmpty) {
+          return result.join();
         }
       }
     }
@@ -335,9 +333,8 @@ class _TemplateLineParser {
           }
         }
 
-        if (!result.isEmpty) {
-          result = result.join();
-          return result;
+        if (result.isNotEmpty) {
+          return result.join();
         }
       }
     }
